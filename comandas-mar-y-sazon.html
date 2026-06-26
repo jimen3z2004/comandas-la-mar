@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mar y Sazón — Comandas</title>
+<style>
+:root{
+  --deep:#0b2b2e;--teal:#16484b;--foam:#f4efe4;--sand:#e7ddc6;
+  --coral:#d8662f;--coral-dark:#b94f1f;--gold:#c8973f;
+  --ok:#3f7d52;--warn:#c8973f;--late:#b3402f;--line:rgba(11,43,46,0.12);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--foam);color:var(--deep);min-height:100vh;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;}
+input,select,textarea{font-family:inherit;}
+#launcher{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px;}
+.l-mark{font-size:12px;text-transform:uppercase;letter-spacing:0.18em;color:var(--coral-dark);font-weight:700;margin-bottom:8px;}
+.l-title{font-size:38px;font-weight:700;color:var(--deep);text-align:center;margin-bottom:6px;}
+.l-sub{color:var(--teal);opacity:0.7;margin-bottom:36px;font-size:15px;text-align:center;}
+.l-grid{display:flex;flex-direction:column;gap:14px;width:100%;max-width:370px;}
+.l-card{background:white;border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;align-items:center;gap:14px;text-align:left;box-shadow:0 1px 4px rgba(11,43,46,0.05);}
+.l-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(11,43,46,0.10);}
+.l-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.l-card.mesero .l-icon{background:#fdeee1;}
+.l-card.cocina .l-icon{background:#e9f0ea;}
+.l-card.admin .l-icon{background:#eee7d4;}
+.l-text strong{display:block;font-size:15px;font-weight:700;}
+.l-text span{font-size:12px;color:var(--teal);opacity:0.7;}
+.l-foot{margin-top:30px;font-size:12px;color:var(--teal);opacity:0.5;text-align:center;max-width:340px;}
+.topbar{background:var(--deep);color:var(--foam);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.topbar-back{color:var(--foam);opacity:0.7;font-size:13px;}
+.topbar-back:hover{opacity:1;}
+.topbar-brand{font-size:16px;font-weight:700;}
+.topbar-role{font-size:11px;text-transform:uppercase;letter-spacing:0.1em;background:rgba(244,239,228,0.12);padding:5px 10px;border-radius:20px;}
+.conn-dot{width:8px;height:8px;border-radius:50%;background:#666;display:inline-block;margin-right:5px;}
+.conn-dot.on{background:#4caf50;}
+#mesero-view{padding-bottom:110px;}
+.sec-label{font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--coral-dark);font-weight:700;padding:16px 16px 8px;}
+.table-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;padding:0 16px 8px;}
+.tbl-btn{background:white;border:1.5px solid var(--line);border-radius:10px;padding:13px 0;text-align:center;font-weight:700;font-size:14px;color:var(--deep);}
+.tbl-btn.active{background:var(--deep);color:var(--foam);border-color:var(--deep);}
+.cat-title{font-size:13px;color:var(--teal);font-weight:700;padding:14px 16px 6px;display:flex;align-items:center;gap:8px;}
+.cat-title::after{content:"";flex:1;height:1px;background:var(--line);}
+.dish-row{display:flex;justify-content:space-between;align-items:center;background:white;border:1px solid var(--line);border-radius:11px;padding:11px 13px;margin:0 16px 7px;}
+.dish-name{font-weight:600;font-size:14px;}
+.dish-price{font-size:12px;color:var(--teal);opacity:0.65;margin-top:2px;}
+.dish-add{width:32px;height:32px;border-radius:50%;background:var(--coral);color:white;font-size:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.qty-row{display:flex;align-items:center;gap:9px;}
+.qty-row button{width:28px;height:28px;border-radius:50%;background:var(--sand);color:var(--deep);font-size:16px;font-weight:700;}
+.qty-row span{min-width:14px;text-align:center;font-weight:700;}
+.note-input{width:100%;border:1px solid var(--line);border-radius:7px;padding:7px 9px;font-size:12px;margin-top:5px;background:var(--foam);}
+.cart-bar{position:fixed;bottom:0;left:0;right:0;background:var(--deep);color:var(--foam);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 -4px 16px rgba(0,0,0,0.15);}
+.cart-info-name{font-size:15px;font-weight:700;}
+.cart-info-sub{font-size:12px;opacity:0.65;margin-top:2px;}
+.send-btn{background:var(--coral);color:white;padding:11px 20px;border-radius:10px;font-weight:700;font-size:13px;}
+.send-btn:disabled{background:#5b6b69;color:rgba(244,239,228,0.4);cursor:not-allowed;}
+.toast{position:fixed;top:65px;left:50%;transform:translateX(-50%);background:var(--ok);color:white;padding:11px 20px;border-radius:30px;font-weight:700;font-size:13px;z-index:200;box-shadow:0 6px 18px rgba(0,0,0,0.2);}
+#cocina-view{padding:16px;}
+.stats-row{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
+.stat-pill{background:white;border-radius:12px;padding:10px 16px;border:1px solid var(--line);min-width:90px;}
+.stat-num{font-size:26px;font-weight:800;line-height:1;}
+.stat-lbl{font-size:11px;text-transform:uppercase;letter-spacing:0.07em;color:var(--teal);opacity:0.7;margin-top:2px;}
+.kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.k-col-title{font-size:13px;text-transform:uppercase;letter-spacing:0.07em;color:var(--teal);font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+.k-count{background:var(--teal);color:white;border-radius:20px;font-size:11px;padding:2px 8px;}
+.order-card{background:white;border-radius:13px;padding:14px 14px 14px 18px;margin-bottom:12px;border:2px solid var(--line);position:relative;overflow:hidden;}
+.order-card.warn{border-color:var(--warn);}
+.order-card.late{border-color:var(--late);background:#fdf4f2;}
+.oc-bar{position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--ok);}
+.order-card.warn .oc-bar{background:var(--warn);}
+.order-card.late .oc-bar{background:var(--late);}
+.oc-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;}
+.oc-mesa{font-size:19px;font-weight:800;}
+.oc-timer{font-size:14px;font-weight:800;}
+.oc-timer.ok{color:var(--ok);}
+.oc-timer.warn{color:var(--warn);}
+.oc-timer.late{color:var(--late);}
+.oc-meta{font-size:11px;color:var(--teal);opacity:0.6;margin-bottom:8px;}
+.oc-item{font-size:13px;padding:2px 0;}
+.oc-note{font-size:11px;color:var(--coral-dark);font-style:italic;padding-left:12px;}
+.oc-actions{margin-top:10px;display:flex;gap:7px;}
+.oc-actions button{flex:1;padding:9px 0;border-radius:8px;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.04em;}
+.btn-start{background:var(--deep);color:var(--foam);}
+.btn-ready{background:var(--ok);color:white;}
+.btn-deliver{background:var(--coral);color:white;}
+.empty-col{text-align:center;color:var(--teal);opacity:0.4;font-size:13px;padding:28px 0;border:1.5px dashed var(--line);border-radius:12px;}
+#admin-view{max-width:980px;margin:0 auto;padding:18px;}
+.tabs{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center;}
+.tab-btn{padding:9px 16px;border-radius:30px;font-size:13px;font-weight:700;background:white;border:1px solid var(--line);color:var(--teal);}
+.tab-btn.active{background:var(--deep);color:var(--foam);border-color:var(--deep);}
+.reset-btn{margin-left:auto;background:transparent;border:1px solid var(--late);color:var(--late);padding:7px 13px;border-radius:8px;font-size:12px;font-weight:700;}
+.a-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.a-card{background:white;border-radius:12px;padding:16px;border:1px solid var(--line);}
+.a-num{font-size:28px;font-weight:800;}
+.a-lbl{font-size:12px;color:var(--teal);opacity:0.65;margin-top:3px;}
+.a-title{font-size:17px;font-weight:700;margin-bottom:12px;}
+table{width:100%;border-collapse:collapse;background:white;border-radius:12px;overflow:hidden;border:1px solid var(--line);}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--teal);opacity:0.7;padding:11px 13px;border-bottom:1px solid var(--line);}
+td{padding:11px 13px;border-bottom:1px solid var(--line);font-size:13px;}
+tr:last-child td{border-bottom:none;}
+.chip{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;text-transform:uppercase;}
+.chip.pendiente{background:#fdeee1;color:var(--coral-dark);}
+.chip.preparacion{background:#fdf3da;color:var(--gold);}
+.chip.listo{background:#e6efe9;color:var(--ok);}
+.chip.entregado{background:#e9e9e9;color:#666;}
+@media(max-width:780px){.kanban{grid-template-columns:1fr;}.a-grid{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+
+<div id="launcher">
+  <div class="l-mark">Mar y Sazón</div>
+  <div class="l-title">Comandas Digitales</div>
+  <p class="l-sub">Elige tu estación para empezar</p>
+  <div class="l-grid">
+    <button class="l-card mesero" onclick="showView('mesero')">
+      <div class="l-icon">📱</div>
+      <div class="l-text"><strong>Tomar Pedido</strong><span>Vista de mesero — celular</span></div>
+    </button>
+    <button class="l-card cocina" onclick="showView('cocina')">
+      <div class="l-icon">🍳</div>
+      <div class="l-text"><strong>Pantalla de Cocina</strong><span>Tablero en tiempo real — TV</span></div>
+    </button>
+    <button class="l-card admin" onclick="showView('admin')">
+      <div class="l-icon">📊</div>
+      <div class="l-text"><strong>Panel Admin</strong><span>Historial y reportes</span></div>
+    </button>
+  </div>
+  <p class="l-foot">🔥 Conectado a Firebase — funciona en tiempo real entre todos los dispositivos</p>
+</div>
+
+<div id="mesero-view" style="display:none">
+  <div class="topbar">
+    <button class="topbar-back" onclick="showView('launcher')">← Volver</button>
+    <span class="topbar-brand">Mar y Sazón</span>
+    <span class="topbar-role"><span class="conn-dot" id="m-dot"></span>Mesero</span>
+  </div>
+  <div id="mesero-body"></div>
+  <div class="cart-bar">
+    <div>
+      <div class="cart-info-name" id="cart-mesa-label">Selecciona una mesa</div>
+      <div class="cart-info-sub" id="cart-items-label">0 ítems · $0</div>
+    </div>
+    <button class="send-btn" id="send-btn" disabled onclick="sendOrder()">Enviar a cocina</button>
+  </div>
+</div>
+
+<div id="cocina-view" style="display:none">
+  <div class="topbar">
+    <button class="topbar-back" onclick="showView('launcher')">← Volver</button>
+    <span class="topbar-brand">Mar y Sazón</span>
+    <span class="topbar-role"><span class="conn-dot" id="c-dot"></span>Cocina</span>
+  </div>
+  <div id="cocina-body"></div>
+</div>
+
+<div id="admin-view" style="display:none">
+  <div class="topbar">
+    <button class="topbar-back" onclick="showView('launcher')">← Volver</button>
+    <span class="topbar-brand">Mar y Sazón</span>
+    <span class="topbar-role"><span class="conn-dot" id="a-dot"></span>Admin</span>
+  </div>
+  <div id="admin-body"></div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+<script>
+// ===================== FIREBASE CONFIG =====================
+const firebaseConfig = {
+  apiKey: "AIzaSyC_CinndBiTy9oIMqXBbuH2VZblAmxf0yA",
+  authDomain: "lamar-f2ff0.firebaseapp.com",
+  databaseURL: "https://lamar-f2ff0-default-rtdb.firebaseio.com",
+  projectId: "lamar-f2ff0",
+  storageBucket: "lamar-f2ff0.firebasestorage.app",
+  messagingSenderId: "728462802663",
+  appId: "1:728462802663:web:f56c30f703e585c6e2ac42",
+  measurementId: "G-N91W6PG5Y7"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ===================== MENÚ =====================
+const MENU = [
+  {cat:"Para Comenzar",items:[
+    {id:"tiradito",name:"Tiradito de Pescado",price:41000},
+    {id:"cev_carretillero",name:"Ceviche Carretillero",price:48000},
+    {id:"cev_mixto",name:"Ceviche Mixto",price:58000},
+    {id:"coctel_camaron",name:"Coctel de Camarón",price:32000},
+    {id:"cev_limeno",name:"Ceviche Limeño",price:75000},
+    {id:"anillos_calamar",name:"Anillos de Calamar",price:45000},
+    {id:"pulpo_vinagreta",name:"Pulpo a la Vinagreta",price:48000},
+  ]},
+  {cat:"Para Compartir",items:[
+    {id:"huevas_pescado",name:"Huevas de Pescado",price:55900},
+    {id:"bocaditos_bacalao",name:"Bocaditos de Bacalao",price:48000},
+    {id:"canastillas_camaron",name:"Canastillas de Camarón a la Huancaína",price:55000},
+    {id:"langostinos_dinamita",name:"Langostinos Dinamita",price:65000},
+    {id:"mariscada_parrilla",name:"Mariscada a la Parrilla",price:180000},
+  ]},
+  {cat:"Sopas & Cremas",items:[
+    {id:"sopa_levantamuertos",name:"Sopa Levantamuertos",price:30000},
+    {id:"cazuela_mar_leva",name:"Cazuela Mar de Leva",price:60000},
+    {id:"chupe_camaron",name:"Chupe de Camarón",price:55000},
+    {id:"sopa_casa",name:"Sopa de la Casa",price:15000},
+  ]},
+  {cat:"Fritos del Mar",items:[
+    {id:"mojarra",name:"Mojarra Roja / Negra",price:40000},
+    {id:"robalo_posta",name:"Robalo Posta",price:57000},
+    {id:"posta_sierra",name:"Posta de Sierra",price:48000},
+    {id:"pargo_rojo",name:"Pargo Rojo",price:null},
+    {id:"lebranche",name:"Lebranche",price:null},
+    {id:"sabalo",name:"Sábalo",price:null},
+    {id:"mero",name:"Mero",price:null},
+  ]},
+  {cat:"Especiales del Mar",items:[
+    {id:"salmon_finas_hierbas",name:"Salmón a las Finas Hierbas",price:65000},
+    {id:"salmon_pina_naranja",name:"Salmón en Piña Naranja",price:68000},
+    {id:"salmon_toscana",name:"Salmón en Salsa Toscana",price:69000},
+    {id:"salmon_huancaina",name:"Salmón a la Huancaína con Camarones",price:75000},
+    {id:"robalo_ajillo",name:"Robalo al Ajillo",price:65000},
+    {id:"robalo_encocado",name:"Robalo Encocado",price:58000},
+    {id:"filete_mar",name:"Filete de Pescado a la Mar",price:68000},
+    {id:"robalo_limon",name:"Robalo al Limón",price:60000},
+    {id:"filete_relleno",name:"Filete de Pescado Relleno",price:70000},
+    {id:"sierra_encocada",name:"Sierra Encocada",price:55000},
+    {id:"escabeche",name:"Escabeche (Sierra o Barracuda)",price:65000},
+    {id:"langostinos_encocados",name:"Langostinos Encocados",price:60000},
+    {id:"camarones_ajillo",name:"Camarones al Ajillo",price:58000},
+    {id:"langosta",name:"Langosta (parrilla/ajillo/huancaína)",price:null},
+    {id:"pulpo_grill",name:"Pulpo al Grill",price:60000},
+    {id:"pulpo_ajillo",name:"Pulpo al Ajillo",price:65000},
+  ]},
+  {cat:"Combinados Marinos",items:[
+    {id:"el_tradicional",name:"El Tradicional",price:79000},
+    {id:"el_limeno",name:"El Limeño",price:79000},
+    {id:"el_poseidon",name:"El Poseidón",price:79000},
+    {id:"el_pescador",name:"El Pescador",price:80000},
+  ]},
+  {cat:"Arroces de la Casa",items:[
+    {id:"risotto_huancaina",name:"Risotto a la Huancaína",price:75000},
+    {id:"arroz_camaron_coco",name:"Arroz Cremoso de Camarón con Coco",price:65000},
+    {id:"arroz_camaron",name:"Arroz de Camarón",price:49900},
+    {id:"risotto_tinta",name:"Risotto en Tinta de Calamar",price:75000},
+    {id:"arroz_chaufa",name:"Arroz Chaufa de Mariscos",price:59000},
+  ]},
+  {cat:"Pastas",items:[
+    {id:"fetuccini_camaron",name:"Fetuccini con Camarón",price:48000},
+    {id:"fetuccini_tinta",name:"Fetuccini en Tinta de Calamar con Langostinos",price:55000},
+    {id:"linguini_frutos_mar",name:"Linguini Frutos del Mar",price:60000},
+    {id:"fetuccini_huancaina",name:"Fetuccini en Salsa Huancaína",price:60000},
+    {id:"fetuccini_verde",name:"Fetuccini Verde",price:60000},
+  ]},
+  {cat:"De la Tierra",items:[
+    {id:"baby_beef",name:"Baby Beef",price:60000},
+    {id:"lomo_saltado",name:"Lomo Saltado",price:58000},
+    {id:"lomo_pimienta",name:"Lomo a la Pimienta",price:65000},
+    {id:"mar_y_tierra",name:"Mar y Tierra",price:87900},
+    {id:"pechuga_hierbas",name:"Pechuga Finas Hierbas",price:38000},
+    {id:"pechuga_gratinada",name:"Pechuga Gratinada",price:48900},
+    {id:"pollo_saltado",name:"Pollo Saltado",price:49900},
+  ]},
+  {cat:"Vegetarianos & Veganos",items:[
+    {id:"risotto_champinones",name:"Risotto Cremoso de Champiñones",price:55000},
+    {id:"arroz_ajonjoli",name:"Arroz de Ajonjolí con Tortilla",price:57000},
+    {id:"boronia_costena",name:"Boronia Costeña",price:45000},
+    {id:"pastas_veganas",name:"Pastas Veganas",price:45000},
+  ]},
+  {cat:"Adicionales",items:[
+    {id:"salsa_camaron",name:"Salsa de Camarón",price:25000},
+    {id:"salsa_frutos_mar",name:"Salsa Frutos del Mar",price:28000},
+    {id:"porcion_arroz_coco",name:"Porción Arroz con Coco",price:12000},
+    {id:"porcion_patacon",name:"Porción de Patacón",price:8000},
+    {id:"porcion_papas",name:"Porción de Papas a la Francesa",price:14000},
+  ]},
+  {cat:"Postres",items:[
+    {id:"flan_napolitano",name:"Flan Napolitano",price:22000},
+    {id:"colita_raton",name:"Colita de Ratón con Helado",price:25000},
+    {id:"panacota_maracuya",name:"Panacota de Maracuyá",price:22000},
+    {id:"panacota_frutos_rojos",name:"Panacota Frutos Rojos",price:22000},
+  ]},
+  {cat:"Bebidas & Cócteles",items:[
+    {id:"limonada_coco",name:"Limonada de Coco",price:15000},
+    {id:"limonada_hierbabuena",name:"Limonada Hierbabuena",price:12000},
+    {id:"limonada_natural",name:"Limonada Natural",price:10000},
+    {id:"limonada_maracumango",name:"Limonada Maracumango",price:15000},
+    {id:"copa_vino",name:"Copa de Vino",price:30000},
+    {id:"margarita_tradicional",name:"Margarita Tradicional",price:32000},
+    {id:"mojito",name:"Mojito",price:25000},
+    {id:"caipirinha",name:"Caipirinha",price:28000},
+    {id:"jarra_sangria",name:"Jarra de Sangría",price:75000},
+    {id:"cuba_libre",name:"Cuba Libre",price:22000},
+    {id:"aguila",name:"Águila Light / Original",price:6000},
+    {id:"corona",name:"Corona",price:12000},
+    {id:"club_colombia",name:"Club Colombia Lata",price:8000},
+    {id:"agua_manantial",name:"Agua Manantial",price:10000},
+    {id:"coca_cola",name:"Coca Cola",price:8000},
+  ]},
+];
+
+// ===================== ESTADO =====================
+const PREP_MIN = 60;
+const NUM_MESAS = 18;
+let selectedTable = null;
+let cart = {};
+let currentView = "launcher";
+let ordersCache = [];
+let fbListener = null;
+let adminTab = "resumen";
+let timerTick = null;
+
+function fmtCOP(n){ return n==null?"según disp.":"$"+n.toLocaleString("es-CO"); }
+function minSince(iso){ return Math.floor((Date.now()-new Date(iso).getTime())/60000); }
+function timerInfo(order){
+  const elapsed=minSince(order.createdAt);
+  const remaining=PREP_MIN-elapsed;
+  return {level:remaining>15?"ok":remaining>0?"warn":"late",remaining,elapsed};
+}
+function fmtRemaining(r){ return r>0?"Faltan "+r+" min":"+"+Math.abs(r)+" min tarde"; }
+function setDot(id,on){ const d=document.getElementById(id); if(d){d.className="conn-dot"+(on?" on":"");} }
+
+// ===================== FIREBASE OPS =====================
+function listenOrders(callback){
+  if(fbListener) db.ref("orders").off("value", fbListener);
+  fbListener = db.ref("orders").on("value", snap => {
+    const data = snap.val() || {};
+    ordersCache = Object.values(data).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+    callback(ordersCache);
+  });
+  db.ref(".info/connected").on("value", snap => {
+    const on = snap.val();
+    setDot("c-dot", on); setDot("a-dot", on); setDot("m-dot", on);
+  });
+}
+function stopListening(){ if(fbListener){ db.ref("orders").off("value",fbListener); fbListener=null; } }
+function pushOrder(order){ return db.ref("orders/"+order.id).set(order); }
+function updateOrderStatus(id, status){ return db.ref("orders/"+id+"/status").set(status); }
+function deleteAllOrders(){ return db.ref("orders").remove(); }
+
+// ===================== VISTAS =====================
+function showView(v){
+  stopListening();
+  clearInterval(timerTick);
+  ["launcher","mesero-view","cocina-view","admin-view"].forEach(id=>{
+    document.getElementById(id).style.display="none";
+  });
+  currentView=v;
+  if(v==="launcher"){ document.getElementById("launcher").style.display="flex"; }
+  else if(v==="mesero"){ document.getElementById("mesero-view").style.display="block"; cart={}; selectedTable=null; renderMesero(); }
+  else if(v==="cocina"){
+    document.getElementById("cocina-view").style.display="block";
+    listenOrders(orders=>{ ordersCache=orders; renderCocina(); });
+    timerTick=setInterval(renderCocina,30000);
+  }
+  else if(v==="admin"){
+    document.getElementById("admin-view").style.display="block";
+    listenOrders(orders=>{ ordersCache=orders; renderAdmin(); });
+  }
+}
+
+// ===================== MESERO =====================
+function renderMesero(){
+  const body=document.getElementById("mesero-body");
+  let html='<div class="sec-label">Selecciona la mesa</div><div class="table-grid">';
+  for(let i=1;i<=NUM_MESAS;i++){
+    html+=`<button class="tbl-btn${selectedTable===i?" active":""}" onclick="selectTable(${i})">${i}</button>`;
+  }
+  html+="</div><div class='sec-label'>Menú</div>";
+  MENU.forEach(group=>{
+    html+=`<div class="cat-title">${group.cat}</div>`;
+    group.items.forEach(item=>{
+      const c=cart[item.id]||{qty:0,note:""};
+      html+=`<div class="dish-row"><div style="flex:1"><div class="dish-name">${item.name}</div><div class="dish-price">${fmtCOP(item.price)} · ~60 min</div>`;
+      if(c.qty>0) html+=`<input class="note-input" placeholder="Nota (ej. sin cebolla...)" value="${(c.note||"").replace(/"/g,"&quot;")}" oninput="setNote('${item.id}',this.value)"/>`;
+      html+=`</div>`;
+      if(c.qty>0) html+=`<div class="qty-row"><button onclick="decItem('${item.id}')">−</button><span>${c.qty}</span><button onclick="addItem('${item.id}')">+</button></div>`;
+      else html+=`<button class="dish-add" onclick="addItem('${item.id}')">+</button>`;
+      html+=`</div>`;
+    });
+  });
+  body.innerHTML=html;
+  updateCartBar();
+}
+function selectTable(n){ selectedTable=n; renderMesero(); }
+function addItem(id){ if(!cart[id]) cart[id]={qty:0,note:""}; cart[id].qty++; renderMesero(); }
+function decItem(id){ if(!cart[id]) return; cart[id].qty--; if(cart[id].qty<=0) delete cart[id]; renderMesero(); }
+function setNote(id,val){ if(cart[id]) cart[id].note=val; }
+function updateCartBar(){
+  const total=Object.entries(cart).reduce((s,[id,c])=>{ const item=MENU.flatMap(g=>g.items).find(i=>i.id===id); return s+(item&&item.price?item.price*c.qty:0); },0);
+  const count=Object.values(cart).reduce((s,c)=>s+c.qty,0);
+  document.getElementById("cart-mesa-label").textContent=selectedTable?`Mesa ${selectedTable}`:"Selecciona una mesa";
+  document.getElementById("cart-items-label").textContent=`${count} ítem${count!==1?"s":""} · ${fmtCOP(total)}`;
+  document.getElementById("send-btn").disabled=!selectedTable||count===0;
+}
+function sendOrder(){
+  const count=Object.values(cart).reduce((s,c)=>s+c.qty,0);
+  if(!selectedTable||count===0) return;
+  const items=Object.entries(cart).map(([id,c])=>{
+    const item=MENU.flatMap(g=>g.items).find(i=>i.id===id);
+    return {id,name:item.name,price:item.price||0,qty:c.qty,note:c.note||""};
+  });
+  const order={id:"ord_"+Date.now(),table:selectedTable,createdAt:new Date().toISOString(),status:"pendiente",items};
+  pushOrder(order).then(()=>{
+    cart={};
+    const t=document.createElement("div");
+    t.className="toast"; t.textContent="✓ Pedido enviado — Mesa "+selectedTable;
+    document.body.appendChild(t); setTimeout(()=>t.remove(),2000);
+    renderMesero();
+  });
+}
+
+// ===================== COCINA =====================
+function renderCocina(){
+  const active=ordersCache.filter(o=>o.status!=="entregado");
+  const cols=[{key:"pendiente",label:"Pendiente"},{key:"preparacion",label:"En Preparación"},{key:"listo",label:"Listo 🔔"}];
+  const stats={
+    pendiente:active.filter(o=>o.status==="pendiente").length,
+    preparacion:active.filter(o=>o.status==="preparacion").length,
+    listo:active.filter(o=>o.status==="listo").length,
+    tarde:active.filter(o=>timerInfo(o).level==="late").length,
+  };
+  let html='<div class="stats-row">';
+  html+=`<div class="stat-pill"><div class="stat-num">${stats.pendiente}</div><div class="stat-lbl">Pendientes</div></div>`;
+  html+=`<div class="stat-pill"><div class="stat-num">${stats.preparacion}</div><div class="stat-lbl">En Preparación</div></div>`;
+  html+=`<div class="stat-pill"><div class="stat-num">${stats.listo}</div><div class="stat-lbl">Listos</div></div>`;
+  html+=`<div class="stat-pill"><div class="stat-num" style="color:${stats.tarde>0?"var(--late)":"inherit"}">${stats.tarde}</div><div class="stat-lbl">Retrasados</div></div>`;
+  html+='</div><div class="kanban">';
+  cols.forEach(col=>{
+    const colOrders=active.filter(o=>o.status===col.key).sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt));
+    html+=`<div><div class="k-col-title">${col.label} <span class="k-count">${colOrders.length}</span></div>`;
+    if(colOrders.length===0) html+=`<div class="empty-col">Sin órdenes</div>`;
+    colOrders.forEach(order=>{
+      const t=timerInfo(order);
+      const hora=new Date(order.createdAt).toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"});
+      html+=`<div class="order-card ${t.level}"><div class="oc-bar"></div>`;
+      html+=`<div class="oc-head"><span class="oc-mesa">Mesa ${order.table}</span><span class="oc-timer ${t.level}">${fmtRemaining(t.remaining)}</span></div>`;
+      html+=`<div class="oc-meta">Entró hace ${t.elapsed} min · ${hora}</div>`;
+      (order.items||[]).forEach(it=>{
+        html+=`<div class="oc-item"><b>${it.qty}×</b> ${it.name}</div>`;
+        if(it.note) html+=`<div class="oc-note">↳ ${it.note}</div>`;
+      });
+      html+=`<div class="oc-actions">`;
+      if(col.key==="pendiente") html+=`<button class="btn-start" onclick="updateStatus('${order.id}','preparacion')">Empezar</button>`;
+      if(col.key==="preparacion") html+=`<button class="btn-ready" onclick="updateStatus('${order.id}','listo')">Marcar listo</button>`;
+      if(col.key==="listo") html+=`<button class="btn-deliver" onclick="updateStatus('${order.id}','entregado')">Entregado ✓</button>`;
+      html+=`</div></div>`;
+    });
+    html+="</div>";
+  });
+  html+="</div>";
+  document.getElementById("cocina-body").innerHTML=html;
+}
+function updateStatus(id,status){ updateOrderStatus(id,status); }
+
+// ===================== ADMIN =====================
+function renderAdmin(){
+  const orders=ordersCache;
+  const totalVentas=orders.reduce((sum,o)=>sum+o.items.reduce((s,it)=>s+(it.price||0)*it.qty,0),0);
+  const dishCount={};
+  orders.forEach(o=>o.items.forEach(it=>{dishCount[it.name]=(dishCount[it.name]||0)+it.qty;}));
+  const topDishes=Object.entries(dishCount).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const sorted=[...orders];
+  let html=`<div class="tabs">
+    <button class="tab-btn${adminTab==="resumen"?" active":""}" onclick="setAdminTab('resumen')">Resumen</button>
+    <button class="tab-btn${adminTab==="historial"?" active":""}" onclick="setAdminTab('historial')">Historial</button>
+    <button class="reset-btn" onclick="resetOrders()">🗑 Borrar todo</button>
+  </div>`;
+  if(adminTab==="resumen"){
+    html+=`<div class="a-grid">
+      <div class="a-card"><div class="a-num">${orders.length}</div><div class="a-lbl">Pedidos totales</div></div>
+      <div class="a-card"><div class="a-num">${fmtCOP(totalVentas)}</div><div class="a-lbl">Ventas acumuladas</div></div>
+      <div class="a-card"><div class="a-num">${orders.filter(o=>o.status!=="entregado").length}</div><div class="a-lbl">Pedidos activos</div></div>
+      <div class="a-card"><div class="a-num">${orders.filter(o=>o.status==="entregado").length}</div><div class="a-lbl">Entregados</div></div>
+    </div>`;
+    html+=`<div class="a-title">Platos más pedidos</div><table><thead><tr><th>Plato</th><th>Cantidad</th></tr></thead><tbody>`;
+    if(topDishes.length===0) html+=`<tr><td colspan="2" style="text-align:center;opacity:0.5">Aún no hay pedidos</td></tr>`;
+    topDishes.forEach(([name,qty])=>{ html+=`<tr><td>${name}</td><td>${qty}</td></tr>`; });
+    html+=`</tbody></table>`;
+  } else {
+    html+=`<table><thead><tr><th>Mesa</th><th>Hora</th><th>Platos</th><th>Total</th><th>Estado</th></tr></thead><tbody>`;
+    if(sorted.length===0) html+=`<tr><td colspan="5" style="text-align:center;opacity:0.5">Aún no hay pedidos</td></tr>`;
+    sorted.forEach(o=>{
+      const tot=o.items.reduce((s,it)=>s+(it.price||0)*it.qty,0);
+      const fecha=new Date(o.createdAt).toLocaleString("es-CO",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
+      const platos=o.items.map(it=>`${it.qty}× ${it.name}`).join(", ");
+      html+=`<tr><td>Mesa ${o.table}</td><td>${fecha}</td><td>${platos}</td><td>${fmtCOP(tot)}</td><td><span class="chip ${o.status}">${o.status}</span></td></tr>`;
+    });
+    html+=`</tbody></table>`;
+  }
+  document.getElementById("admin-body").innerHTML=html;
+}
+function setAdminTab(t){ adminTab=t; renderAdmin(); }
+function resetOrders(){ if(!confirm("¿Borrar todos los pedidos?")) return; deleteAllOrders(); }
+</script>
+</body>
+</html>
