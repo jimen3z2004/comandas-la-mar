@@ -5,11 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mar y Sazón — Comandas</title>
 <style>
-:root{
-  --deep:#0b2b2e;--teal:#16484b;--foam:#f4efe4;--sand:#e7ddc6;
-  --coral:#d8662f;--coral-dark:#b94f1f;--gold:#c8973f;
-  --ok:#3f7d52;--warn:#c8973f;--late:#b3402f;--line:rgba(11,43,46,0.12);
-}
+:root{--deep:#0b2b2e;--teal:#16484b;--foam:#f4efe4;--sand:#e7ddc6;--coral:#d8662f;--coral-dark:#b94f1f;--gold:#c8973f;--ok:#3f7d52;--warn:#c8973f;--late:#b3402f;--line:rgba(11,43,46,0.12);}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:system-ui,-apple-system,sans-serif;background:var(--foam);color:var(--deep);min-height:100vh;}
 button{font-family:inherit;cursor:pointer;border:none;background:none;}
@@ -22,69 +18,74 @@ input,select,textarea{font-family:inherit;}
 .l-card{background:white;border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;align-items:center;gap:14px;text-align:left;box-shadow:0 1px 4px rgba(11,43,46,0.05);}
 .l-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(11,43,46,0.10);}
 .l-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
-.l-card.mesero .l-icon{background:#fdeee1;}
-.l-card.cocina .l-icon{background:#e9f0ea;}
-.l-card.admin .l-icon{background:#eee7d4;}
-.l-text strong{display:block;font-size:15px;font-weight:700;}
-.l-text span{font-size:12px;color:var(--teal);opacity:0.7;}
+.l-card.mesero .l-icon{background:#fdeee1;} .l-card.cocina .l-icon{background:#e9f0ea;} .l-card.admin .l-icon{background:#eee7d4;}
+.l-text strong{display:block;font-size:15px;font-weight:700;} .l-text span{font-size:12px;color:var(--teal);opacity:0.7;}
 .l-foot{margin-top:30px;font-size:12px;color:var(--teal);opacity:0.5;text-align:center;max-width:340px;}
 .topbar{background:var(--deep);color:var(--foam);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
-.topbar-back{color:var(--foam);opacity:0.7;font-size:13px;}
-.topbar-back:hover{opacity:1;}
+.topbar-back{color:var(--foam);opacity:0.7;font-size:13px;} .topbar-back:hover{opacity:1;}
 .topbar-brand{font-size:16px;font-weight:700;}
 .topbar-role{font-size:11px;text-transform:uppercase;letter-spacing:0.1em;background:rgba(244,239,228,0.12);padding:5px 10px;border-radius:20px;}
-.conn-dot{width:8px;height:8px;border-radius:50%;background:#666;display:inline-block;margin-right:5px;}
-.conn-dot.on{background:#4caf50;}
+.conn-dot{width:8px;height:8px;border-radius:50%;background:#666;display:inline-block;margin-right:5px;} .conn-dot.on{background:#4caf50;}
 #mesero-view{padding-bottom:110px;}
 .sec-label{font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--coral-dark);font-weight:700;padding:16px 16px 8px;}
 .table-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;padding:0 16px 8px;}
-.tbl-btn{background:white;border:1.5px solid var(--line);border-radius:10px;padding:13px 0;text-align:center;font-weight:700;font-size:14px;color:var(--deep);}
+.tbl-btn{background:white;border:2px solid var(--line);border-radius:10px;padding:10px 0 7px;text-align:center;font-weight:700;font-size:15px;color:var(--deep);line-height:1.2;}
+.tbl-btn.occupied{background:#fff3ec;border-color:var(--coral);color:var(--coral-dark);}
 .tbl-btn.active{background:var(--deep);color:var(--foam);border-color:var(--deep);}
+.tbl-btn.occupied.active{background:var(--coral-dark);color:white;border-color:var(--coral-dark);}
+.tbl-sub{display:block;font-size:9px;font-weight:600;opacity:0.65;text-transform:uppercase;margin-top:2px;}
+.tbl-legend{display:flex;gap:14px;padding:0 16px 10px;font-size:11px;color:var(--teal);opacity:0.7;}
+.tbl-legend span{display:flex;align-items:center;gap:5px;}
+.tbl-legend i{width:10px;height:10px;border-radius:3px;display:inline-block;}
+.tbl-legend i.lib{background:white;border:1.5px solid var(--line);} .tbl-legend i.occ{background:#fff3ec;border:1.5px solid var(--coral);}
+/* MODO EDICIÓN */
+.edit-banner{background:var(--coral);color:white;padding:12px 16px;margin:0 16px 12px;border-radius:12px;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:space-between;}
+.edit-banner span{opacity:0.85;font-weight:500;}
+.edit-order-box{background:white;border:2px solid var(--coral);border-radius:12px;margin:0 16px 14px;overflow:hidden;}
+.edit-order-head{background:#fff3ec;padding:10px 14px;font-size:12px;font-weight:700;color:var(--coral-dark);display:flex;justify-content:space-between;align-items:center;}
+.edit-order-item{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-top:1px solid var(--line);}
+.edit-item-name{font-size:13.5px;font-weight:600;flex:1;}
+.edit-item-price{font-size:12px;color:var(--teal);opacity:0.6;margin-top:2px;}
+.edit-note{font-size:11px;color:var(--coral-dark);font-style:italic;margin-top:3px;}
+/* MENÚ */
 .cat-title{font-size:13px;color:var(--teal);font-weight:700;padding:14px 16px 6px;display:flex;align-items:center;gap:8px;}
 .cat-title::after{content:"";flex:1;height:1px;background:var(--line);}
 .dish-row{display:flex;justify-content:space-between;align-items:center;background:white;border:1px solid var(--line);border-radius:11px;padding:11px 13px;margin:0 16px 7px;}
-.dish-name{font-weight:600;font-size:14px;}
-.dish-price{font-size:12px;color:var(--teal);opacity:0.65;margin-top:2px;}
+.dish-name{font-weight:600;font-size:14px;} .dish-price{font-size:12px;color:var(--teal);opacity:0.65;margin-top:2px;}
 .dish-add{width:32px;height:32px;border-radius:50%;background:var(--coral);color:white;font-size:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .qty-row{display:flex;align-items:center;gap:9px;}
 .qty-row button{width:28px;height:28px;border-radius:50%;background:var(--sand);color:var(--deep);font-size:16px;font-weight:700;}
 .qty-row span{min-width:14px;text-align:center;font-weight:700;}
 .note-input{width:100%;border:1px solid var(--line);border-radius:7px;padding:7px 9px;font-size:12px;margin-top:5px;background:var(--foam);}
 .cart-bar{position:fixed;bottom:0;left:0;right:0;background:var(--deep);color:var(--foam);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 -4px 16px rgba(0,0,0,0.15);}
-.cart-info-name{font-size:15px;font-weight:700;}
-.cart-info-sub{font-size:12px;opacity:0.65;margin-top:2px;}
+.cart-info-name{font-size:15px;font-weight:700;} .cart-info-sub{font-size:12px;opacity:0.65;margin-top:2px;}
 .send-btn{background:var(--coral);color:white;padding:11px 20px;border-radius:10px;font-weight:700;font-size:13px;}
 .send-btn:disabled{background:#5b6b69;color:rgba(244,239,228,0.4);cursor:not-allowed;}
+.save-btn{background:var(--ok);color:white;padding:11px 20px;border-radius:10px;font-weight:700;font-size:13px;}
+.save-btn:disabled{background:#5b6b69;color:rgba(244,239,228,0.4);cursor:not-allowed;}
 .toast{position:fixed;top:65px;left:50%;transform:translateX(-50%);background:var(--ok);color:white;padding:11px 20px;border-radius:30px;font-weight:700;font-size:13px;z-index:200;box-shadow:0 6px 18px rgba(0,0,0,0.2);}
+/* COCINA */
 #cocina-view{padding:16px;}
 .stats-row{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
 .stat-pill{background:white;border-radius:12px;padding:10px 16px;border:1px solid var(--line);min-width:90px;}
-.stat-num{font-size:26px;font-weight:800;line-height:1;}
-.stat-lbl{font-size:11px;text-transform:uppercase;letter-spacing:0.07em;color:var(--teal);opacity:0.7;margin-top:2px;}
+.stat-num{font-size:26px;font-weight:800;line-height:1;} .stat-lbl{font-size:11px;text-transform:uppercase;letter-spacing:0.07em;color:var(--teal);opacity:0.7;margin-top:2px;}
 .kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
 .k-col-title{font-size:13px;text-transform:uppercase;letter-spacing:0.07em;color:var(--teal);font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:7px;}
 .k-count{background:var(--teal);color:white;border-radius:20px;font-size:11px;padding:2px 8px;}
 .order-card{background:white;border-radius:13px;padding:14px 14px 14px 18px;margin-bottom:12px;border:2px solid var(--line);position:relative;overflow:hidden;}
-.order-card.warn{border-color:var(--warn);}
-.order-card.late{border-color:var(--late);background:#fdf4f2;}
+.order-card.warn{border-color:var(--warn);} .order-card.late{border-color:var(--late);background:#fdf4f2;}
 .oc-bar{position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--ok);}
-.order-card.warn .oc-bar{background:var(--warn);}
-.order-card.late .oc-bar{background:var(--late);}
+.order-card.warn .oc-bar{background:var(--warn);} .order-card.late .oc-bar{background:var(--late);}
 .oc-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;}
-.oc-mesa{font-size:19px;font-weight:800;}
-.oc-timer{font-size:14px;font-weight:800;}
-.oc-timer.ok{color:var(--ok);}
-.oc-timer.warn{color:var(--warn);}
-.oc-timer.late{color:var(--late);}
+.oc-mesa{font-size:19px;font-weight:800;} .oc-timer{font-size:14px;font-weight:800;}
+.oc-timer.ok{color:var(--ok);} .oc-timer.warn{color:var(--warn);} .oc-timer.late{color:var(--late);}
 .oc-meta{font-size:11px;color:var(--teal);opacity:0.6;margin-bottom:8px;}
-.oc-item{font-size:13px;padding:2px 0;}
-.oc-note{font-size:11px;color:var(--coral-dark);font-style:italic;padding-left:12px;}
+.oc-item{font-size:13px;padding:2px 0;} .oc-note{font-size:11px;color:var(--coral-dark);font-style:italic;padding-left:12px;}
 .oc-actions{margin-top:10px;display:flex;gap:7px;}
 .oc-actions button{flex:1;padding:9px 0;border-radius:8px;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.04em;}
-.btn-start{background:var(--deep);color:var(--foam);}
-.btn-ready{background:var(--ok);color:white;}
-.btn-deliver{background:var(--coral);color:white;}
+.btn-start{background:var(--deep);color:var(--foam);} .btn-ready{background:var(--ok);color:white;} .btn-deliver{background:var(--coral);color:white;}
 .empty-col{text-align:center;color:var(--teal);opacity:0.4;font-size:13px;padding:28px 0;border:1.5px dashed var(--line);border-radius:12px;}
+/* ADMIN */
 #admin-view{max-width:980px;margin:0 auto;padding:18px;}
 .tabs{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center;}
 .tab-btn{padding:9px 16px;border-radius:30px;font-size:13px;font-weight:700;background:white;border:1px solid var(--line);color:var(--teal);}
@@ -92,19 +93,36 @@ input,select,textarea{font-family:inherit;}
 .reset-btn{margin-left:auto;background:transparent;border:1px solid var(--late);color:var(--late);padding:7px 13px;border-radius:8px;font-size:12px;font-weight:700;}
 .a-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
 .a-card{background:white;border-radius:12px;padding:16px;border:1px solid var(--line);}
-.a-num{font-size:28px;font-weight:800;}
-.a-lbl{font-size:12px;color:var(--teal);opacity:0.65;margin-top:3px;}
+.a-num{font-size:28px;font-weight:800;} .a-lbl{font-size:12px;color:var(--teal);opacity:0.65;margin-top:3px;}
 .a-title{font-size:17px;font-weight:700;margin-bottom:12px;}
 table{width:100%;border-collapse:collapse;background:white;border-radius:12px;overflow:hidden;border:1px solid var(--line);}
 th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--teal);opacity:0.7;padding:11px 13px;border-bottom:1px solid var(--line);}
-td{padding:11px 13px;border-bottom:1px solid var(--line);font-size:13px;}
-tr:last-child td{border-bottom:none;}
+td{padding:11px 13px;border-bottom:1px solid var(--line);font-size:13px;} tr:last-child td{border-bottom:none;}
 .chip{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;text-transform:uppercase;}
-.chip.pendiente{background:#fdeee1;color:var(--coral-dark);}
-.chip.preparacion{background:#fdf3da;color:var(--gold);}
-.chip.listo{background:#e6efe9;color:var(--ok);}
-.chip.entregado{background:#e9e9e9;color:#666;}
-@media(max-width:780px){.kanban{grid-template-columns:1fr;}.a-grid{grid-template-columns:repeat(2,1fr);}}
+.chip.pendiente{background:#fdeee1;color:var(--coral-dark);} .chip.preparacion{background:#fdf3da;color:var(--gold);}
+.chip.listo{background:#e6efe9;color:var(--ok);} .chip.entregado{background:#e9e9e9;color:#666;}
+.mesas-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+.mesa-card{background:white;border:2px solid var(--line);border-radius:13px;padding:14px;cursor:pointer;transition:box-shadow 0.15s;}
+.mesa-card:hover{box-shadow:0 4px 16px rgba(11,43,46,0.12);}
+.mesa-card.ocupada{border-color:var(--coral);}
+.mesa-card.libre{opacity:0.45;cursor:default;}
+.mc-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.mc-num{font-size:17px;font-weight:800;}
+.mc-chip{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;}
+.mc-chip.ocupada{background:#fff3ec;color:var(--coral-dark);} .mc-chip.libre{background:#e9e9e9;color:#888;}
+.mc-total{font-size:18px;font-weight:800;color:var(--ok);}
+.mc-info{font-size:11px;color:var(--teal);opacity:0.65;margin-top:3px;}
+.detalle-back{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--coral-dark);font-size:14px;margin-bottom:14px;cursor:pointer;}
+.detalle-box{background:white;border-radius:13px;border:1px solid var(--line);padding:18px;margin-bottom:14px;}
+.detalle-title{font-size:20px;font-weight:800;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
+.det-order{border-bottom:1px solid var(--line);padding:10px 0;}
+.det-order:last-child{border-bottom:none;}
+.det-order-head{font-size:11px;color:var(--teal);opacity:0.6;margin-bottom:6px;}
+.det-item{display:flex;justify-content:space-between;font-size:13px;padding:2px 0;}
+.det-sub{display:flex;justify-content:space-between;font-size:12px;color:var(--teal);opacity:0.7;margin-top:6px;padding-top:6px;border-top:1px dashed var(--line);}
+.det-grand{display:flex;justify-content:space-between;font-size:18px;font-weight:800;padding-top:14px;margin-top:6px;border-top:2px solid var(--deep);}
+.print-btn{background:var(--deep);color:white;padding:11px;border-radius:8px;font-weight:700;font-size:13px;width:100%;margin-top:14px;}
+@media(max-width:780px){.kanban{grid-template-columns:1fr;}.a-grid{grid-template-columns:repeat(2,1fr);}.mesas-grid{grid-template-columns:repeat(2,1fr);}}
 </style>
 </head>
 <body>
@@ -114,20 +132,11 @@ tr:last-child td{border-bottom:none;}
   <div class="l-title">Comandas Digitales</div>
   <p class="l-sub">Elige tu estación para empezar</p>
   <div class="l-grid">
-    <button class="l-card mesero" onclick="showView('mesero')">
-      <div class="l-icon">📱</div>
-      <div class="l-text"><strong>Tomar Pedido</strong><span>Vista de mesero — celular</span></div>
-    </button>
-    <button class="l-card cocina" onclick="showView('cocina')">
-      <div class="l-icon">🍳</div>
-      <div class="l-text"><strong>Pantalla de Cocina</strong><span>Tablero en tiempo real — TV</span></div>
-    </button>
-    <button class="l-card admin" onclick="showView('admin')">
-      <div class="l-icon">📊</div>
-      <div class="l-text"><strong>Panel Admin</strong><span>Historial y reportes</span></div>
-    </button>
+    <button class="l-card mesero" onclick="showView('mesero')"><div class="l-icon">📱</div><div class="l-text"><strong>Tomar Pedido</strong><span>Vista de mesero — celular</span></div></button>
+    <button class="l-card cocina" onclick="showView('cocina')"><div class="l-icon">🍳</div><div class="l-text"><strong>Pantalla de Cocina</strong><span>Tablero en tiempo real — TV</span></div></button>
+    <button class="l-card admin" onclick="showView('admin')"><div class="l-icon">📊</div><div class="l-text"><strong>Panel Admin</strong><span>Historial y cuentas por mesa</span></div></button>
   </div>
-  <p class="l-foot">🔥 Conectado a Firebase — funciona en tiempo real entre todos los dispositivos</p>
+  <p class="l-foot">🔥 Conectado a Firebase — tiempo real entre todos los dispositivos</p>
 </div>
 
 <div id="mesero-view" style="display:none">
@@ -142,7 +151,9 @@ tr:last-child td{border-bottom:none;}
       <div class="cart-info-name" id="cart-mesa-label">Selecciona una mesa</div>
       <div class="cart-info-sub" id="cart-items-label">0 ítems · $0</div>
     </div>
-    <button class="send-btn" id="send-btn" disabled onclick="sendOrder()">Enviar a cocina</button>
+    <div id="cart-btn-area">
+      <button class="send-btn" id="send-btn" disabled onclick="sendOrder()">Enviar a cocina</button>
+    </div>
   </div>
 </div>
 
@@ -164,12 +175,9 @@ tr:last-child td{border-bottom:none;}
   <div id="admin-body"></div>
 </div>
 
-<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-
 <script>
-// ===================== FIREBASE CONFIG =====================
 const firebaseConfig = {
   apiKey: "AIzaSyC_CinndBiTy9oIMqXBbuH2VZblAmxf0yA",
   authDomain: "lamar-f2ff0.firebaseapp.com",
@@ -177,13 +185,11 @@ const firebaseConfig = {
   projectId: "lamar-f2ff0",
   storageBucket: "lamar-f2ff0.firebasestorage.app",
   messagingSenderId: "728462802663",
-  appId: "1:728462802663:web:f56c30f703e585c6e2ac42",
-  measurementId: "G-N91W6PG5Y7"
+  appId: "1:728462802663:web:f56c30f703e585c6e2ac42"
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// ===================== MENÚ =====================
 const MENU = [
   {cat:"Para Comenzar",items:[
     {id:"tiradito",name:"Tiradito de Pescado",price:41000},
@@ -230,7 +236,7 @@ const MENU = [
     {id:"escabeche",name:"Escabeche (Sierra o Barracuda)",price:65000},
     {id:"langostinos_encocados",name:"Langostinos Encocados",price:60000},
     {id:"camarones_ajillo",name:"Camarones al Ajillo",price:58000},
-    {id:"langosta",name:"Langosta (parrilla/ajillo/huancaína)",price:null},
+    {id:"langosta",name:"Langosta",price:null},
     {id:"pulpo_grill",name:"Pulpo al Grill",price:60000},
     {id:"pulpo_ajillo",name:"Pulpo al Ajillo",price:65000},
   ]},
@@ -301,82 +307,131 @@ const MENU = [
   ]},
 ];
 
-// ===================== ESTADO =====================
-const PREP_MIN = 60;
-const NUM_MESAS = 18;
-let selectedTable = null;
-let cart = {};
-let currentView = "launcher";
-let ordersCache = [];
-let fbListener = null;
-let adminTab = "resumen";
-let timerTick = null;
+const PREP_MIN=60, NUM_MESAS=18;
+let selectedTable=null, cart={}, currentView="launcher";
+let ordersCache=[], fbListener=null, adminTab="cuentas", timerTick=null, detalleMesa=null;
+// Para modo edición
+let editingOrderId=null; // id del pedido que se está editando (null = nuevo pedido)
 
-function fmtCOP(n){ return n==null?"según disp.":"$"+n.toLocaleString("es-CO"); }
-function minSince(iso){ return Math.floor((Date.now()-new Date(iso).getTime())/60000); }
-function timerInfo(order){
-  const elapsed=minSince(order.createdAt);
-  const remaining=PREP_MIN-elapsed;
-  return {level:remaining>15?"ok":remaining>0?"warn":"late",remaining,elapsed};
-}
-function fmtRemaining(r){ return r>0?"Faltan "+r+" min":"+"+Math.abs(r)+" min tarde"; }
-function setDot(id,on){ const d=document.getElementById(id); if(d){d.className="conn-dot"+(on?" on":"");} }
+function fmtCOP(n){return n==null?"según disp.":"$"+n.toLocaleString("es-CO");}
+function minSince(iso){return Math.floor((Date.now()-new Date(iso).getTime())/60000);}
+function timerInfo(o){const e=minSince(o.createdAt),r=PREP_MIN-e;return{level:r>15?"ok":r>0?"warn":"late",remaining:r,elapsed:e};}
+function fmtRemaining(r){return r>0?"Faltan "+r+" min":"+"+Math.abs(r)+" min tarde";}
+function setDot(id,on){const d=document.getElementById(id);if(d)d.className="conn-dot"+(on?" on":"");}
+function getOccupiedTables(){const t=new Set();ordersCache.filter(o=>o.status!=="entregado").forEach(o=>t.add(o.table));return t;}
+// Pedidos editables = solo pendiente o en preparación
+function getEditableOrders(table){return ordersCache.filter(o=>o.table===table&&(o.status==="pendiente"||o.status==="preparacion"));}
 
-// ===================== FIREBASE OPS =====================
-function listenOrders(callback){
-  if(fbListener) db.ref("orders").off("value", fbListener);
-  fbListener = db.ref("orders").on("value", snap => {
-    const data = snap.val() || {};
-    ordersCache = Object.values(data).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
-    callback(ordersCache);
+// Firebase
+function listenOrders(cb){
+  if(fbListener)db.ref("orders").off("value",fbListener);
+  fbListener=db.ref("orders").on("value",snap=>{
+    const data=snap.val()||{};
+    ordersCache=Object.values(data).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+    cb(ordersCache);
   });
-  db.ref(".info/connected").on("value", snap => {
-    const on = snap.val();
-    setDot("c-dot", on); setDot("a-dot", on); setDot("m-dot", on);
-  });
+  db.ref(".info/connected").on("value",snap=>{const on=snap.val();setDot("c-dot",on);setDot("a-dot",on);setDot("m-dot",on);});
 }
-function stopListening(){ if(fbListener){ db.ref("orders").off("value",fbListener); fbListener=null; } }
-function pushOrder(order){ return db.ref("orders/"+order.id).set(order); }
-function updateOrderStatus(id, status){ return db.ref("orders/"+id+"/status").set(status); }
-function deleteAllOrders(){ return db.ref("orders").remove(); }
+function stopListening(){if(fbListener){db.ref("orders").off("value",fbListener);fbListener=null;}}
+function pushOrder(o){return db.ref("orders/"+o.id).set(o);}
+function saveOrderItems(id,items){return db.ref("orders/"+id+"/items").set(items);}
+function updateOrderStatus(id,s){return db.ref("orders/"+id+"/status").set(s);}
+function deleteAllOrders(){return db.ref("orders").remove();}
 
-// ===================== VISTAS =====================
 function showView(v){
-  stopListening();
-  clearInterval(timerTick);
-  ["launcher","mesero-view","cocina-view","admin-view"].forEach(id=>{
-    document.getElementById(id).style.display="none";
-  });
+  stopListening();clearInterval(timerTick);
+  ["launcher","mesero-view","cocina-view","admin-view"].forEach(id=>document.getElementById(id).style.display="none");
   currentView=v;
-  if(v==="launcher"){ document.getElementById("launcher").style.display="flex"; }
-  else if(v==="mesero"){ document.getElementById("mesero-view").style.display="block"; cart={}; selectedTable=null; renderMesero(); }
+  if(v==="launcher"){document.getElementById("launcher").style.display="flex";}
+  else if(v==="mesero"){
+    document.getElementById("mesero-view").style.display="block";
+    cart={};selectedTable=null;editingOrderId=null;
+    listenOrders(()=>renderMesero());
+  }
   else if(v==="cocina"){
     document.getElementById("cocina-view").style.display="block";
-    listenOrders(orders=>{ ordersCache=orders; renderCocina(); });
+    listenOrders(()=>renderCocina());
     timerTick=setInterval(renderCocina,30000);
   }
   else if(v==="admin"){
     document.getElementById("admin-view").style.display="block";
-    listenOrders(orders=>{ ordersCache=orders; renderAdmin(); });
+    detalleMesa=null;
+    listenOrders(()=>renderAdmin());
   }
 }
 
-// ===================== MESERO =====================
-function renderMesero(){
-  const body=document.getElementById("mesero-body");
-  let html='<div class="sec-label">Selecciona la mesa</div><div class="table-grid">';
-  for(let i=1;i<=NUM_MESAS;i++){
-    html+=`<button class="tbl-btn${selectedTable===i?" active":""}" onclick="selectTable(${i})">${i}</button>`;
+// ===== MESERO =====
+function selectTable(n){
+  selectedTable=n;
+  cart={};
+  editingOrderId=null;
+  // Si la mesa tiene pedidos editables, entrar en modo edición del primero
+  const editables=getEditableOrders(n);
+  if(editables.length>0){
+    // Precargar el primer pedido editable en el carrito
+    editingOrderId=editables[0].id;
+    editables[0].items.forEach(it=>{cart[it.id]={qty:it.qty,name:it.name,price:it.price,note:it.note||""};});
   }
-  html+="</div><div class='sec-label'>Menú</div>";
+  renderMesero();
+}
+
+function renderMesero(){
+  const occupied=getOccupiedTables();
+  const body=document.getElementById("mesero-body");
+  let html='<div class="sec-label">Selecciona la mesa</div>';
+  html+='<div class="tbl-legend"><span><i class="lib"></i>Libre</span><span><i class="occ"></i>Con pedido</span></div>';
+  html+='<div class="table-grid">';
+  for(let i=1;i<=NUM_MESAS;i++){
+    const isOcc=occupied.has(i);
+    const cls="tbl-btn"+(isOcc?" occupied":"")+(selectedTable===i?" active":"");
+    html+=`<button class="${cls}" onclick="selectTable(${i})">${i}<span class="tbl-sub">${isOcc?"ocupada":"libre"}</span></button>`;
+  }
+  html+="</div>";
+
+  // Si hay pedido en edición, mostrar banner y los ítems actuales
+  if(editingOrderId && selectedTable){
+    const order=ordersCache.find(o=>o.id===editingOrderId);
+    if(order){
+      const hora=new Date(order.createdAt).toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"});
+      html+=`<div class="edit-banner">✏️ Editando pedido de Mesa ${selectedTable} <span>Entró: ${hora}</span></div>`;
+      html+=`<div class="edit-order-box">`;
+      html+=`<div class="edit-order-head"><span>Ítems actuales del pedido</span><span class="chip ${order.status}">${order.status}</span></div>`;
+      Object.entries(cart).forEach(([id,c])=>{
+        const item=MENU.flatMap(g=>g.items).find(i=>i.id===id);
+        if(!item)return;
+        html+=`<div class="edit-order-item">
+          <div style="flex:1">
+            <div class="edit-item-name">${item.name}</div>
+            <div class="edit-item-price">${fmtCOP(item.price)}</div>
+            ${c.note?`<div class="edit-note">↳ ${c.note}</div>`:""}
+          </div>
+          <div class="qty-row">
+            <button onclick="decItem('${id}')">−</button>
+            <span>${c.qty}</span>
+            <button onclick="addItem('${id}')">+</button>
+          </div>
+        </div>`;
+      });
+      if(Object.keys(cart).length===0){
+        html+=`<div style="padding:14px;font-size:13px;color:var(--teal);opacity:0.5;text-align:center;">Sin ítems — agrega del menú abajo</div>`;
+      }
+      html+="</div>";
+    }
+    html+=`<div class="sec-label">Agregar más platos</div>`;
+  } else {
+    html+=`<div class="sec-label">Menú</div>`;
+  }
+
   MENU.forEach(group=>{
     html+=`<div class="cat-title">${group.cat}</div>`;
     group.items.forEach(item=>{
       const c=cart[item.id]||{qty:0,note:""};
+      // En modo edición no mostrar los que ya están en cart aquí (se muestran arriba)
+      if(editingOrderId && c.qty>0) return;
       html+=`<div class="dish-row"><div style="flex:1"><div class="dish-name">${item.name}</div><div class="dish-price">${fmtCOP(item.price)} · ~60 min</div>`;
-      if(c.qty>0) html+=`<input class="note-input" placeholder="Nota (ej. sin cebolla...)" value="${(c.note||"").replace(/"/g,"&quot;")}" oninput="setNote('${item.id}',this.value)"/>`;
+      if(!editingOrderId && c.qty>0) html+=`<input class="note-input" placeholder="Nota (ej. sin cebolla...)" value="${(c.note||"").replace(/"/g,"&quot;")}" oninput="setNote('${item.id}',this.value)"/>`;
       html+=`</div>`;
-      if(c.qty>0) html+=`<div class="qty-row"><button onclick="decItem('${item.id}')">−</button><span>${c.qty}</span><button onclick="addItem('${item.id}')">+</button></div>`;
+      if(!editingOrderId && c.qty>0) html+=`<div class="qty-row"><button onclick="decItem('${item.id}')">−</button><span>${c.qty}</span><button onclick="addItem('${item.id}')">+</button></div>`;
       else html+=`<button class="dish-add" onclick="addItem('${item.id}')">+</button>`;
       html+=`</div>`;
     });
@@ -384,44 +439,66 @@ function renderMesero(){
   body.innerHTML=html;
   updateCartBar();
 }
-function selectTable(n){ selectedTable=n; renderMesero(); }
-function addItem(id){ if(!cart[id]) cart[id]={qty:0,note:""}; cart[id].qty++; renderMesero(); }
-function decItem(id){ if(!cart[id]) return; cart[id].qty--; if(cart[id].qty<=0) delete cart[id]; renderMesero(); }
-function setNote(id,val){ if(cart[id]) cart[id].note=val; }
-function updateCartBar(){
-  const total=Object.entries(cart).reduce((s,[id,c])=>{ const item=MENU.flatMap(g=>g.items).find(i=>i.id===id); return s+(item&&item.price?item.price*c.qty:0); },0);
-  const count=Object.values(cart).reduce((s,c)=>s+c.qty,0);
-  document.getElementById("cart-mesa-label").textContent=selectedTable?`Mesa ${selectedTable}`:"Selecciona una mesa";
-  document.getElementById("cart-items-label").textContent=`${count} ítem${count!==1?"s":""} · ${fmtCOP(total)}`;
-  document.getElementById("send-btn").disabled=!selectedTable||count===0;
+
+function addItem(id){
+  if(!cart[id]){const item=MENU.flatMap(g=>g.items).find(i=>i.id===id);cart[id]={qty:0,name:item.name,price:item.price||0,note:""};}
+  cart[id].qty++;
+  renderMesero();
 }
+function decItem(id){
+  if(!cart[id])return;
+  cart[id].qty--;
+  if(cart[id].qty<=0)delete cart[id];
+  renderMesero();
+}
+function setNote(id,val){if(cart[id])cart[id].note=val;}
+
+function updateCartBar(){
+  const total=Object.entries(cart).reduce((s,[id,c])=>{return s+(c.price?c.price*c.qty:0);},0);
+  const count=Object.values(cart).reduce((s,c)=>s+c.qty,0);
+  document.getElementById("cart-mesa-label").textContent=selectedTable?(editingOrderId?`✏️ Editando Mesa ${selectedTable}`:`Mesa ${selectedTable}`):"Selecciona una mesa";
+  document.getElementById("cart-items-label").textContent=`${count} ítem${count!==1?"s":""} · ${fmtCOP(total)}`;
+  const btnArea=document.getElementById("cart-btn-area");
+  if(editingOrderId){
+    btnArea.innerHTML=`<button class="save-btn" id="save-btn" ${!selectedTable||count===0?"disabled":""} onclick="saveEdit()">Guardar cambios</button>`;
+  } else {
+    btnArea.innerHTML=`<button class="send-btn" id="send-btn" ${!selectedTable||count===0?"disabled":""} onclick="sendOrder()">Enviar a cocina</button>`;
+  }
+}
+
 function sendOrder(){
   const count=Object.values(cart).reduce((s,c)=>s+c.qty,0);
-  if(!selectedTable||count===0) return;
-  const items=Object.entries(cart).map(([id,c])=>{
-    const item=MENU.flatMap(g=>g.items).find(i=>i.id===id);
-    return {id,name:item.name,price:item.price||0,qty:c.qty,note:c.note||""};
-  });
+  if(!selectedTable||count===0)return;
+  const items=Object.entries(cart).map(([id,c])=>{const item=MENU.flatMap(g=>g.items).find(i=>i.id===id);return{id,name:item.name,price:item.price||0,qty:c.qty,note:c.note||""};});
   const order={id:"ord_"+Date.now(),table:selectedTable,createdAt:new Date().toISOString(),status:"pendiente",items};
   pushOrder(order).then(()=>{
-    cart={};
-    const t=document.createElement("div");
-    t.className="toast"; t.textContent="✓ Pedido enviado — Mesa "+selectedTable;
-    document.body.appendChild(t); setTimeout(()=>t.remove(),2000);
+    cart={};editingOrderId=null;
+    showToast("✓ Pedido enviado — Mesa "+selectedTable);
     renderMesero();
   });
 }
 
-// ===================== COCINA =====================
+function saveEdit(){
+  const count=Object.values(cart).reduce((s,c)=>s+c.qty,0);
+  if(!editingOrderId||count===0)return;
+  const items=Object.entries(cart).map(([id,c])=>{const item=MENU.flatMap(g=>g.items).find(i=>i.id===id);return{id,name:item?item.name:c.name,price:c.price||0,qty:c.qty,note:c.note||""};});
+  saveOrderItems(editingOrderId,items).then(()=>{
+    showToast("✓ Pedido actualizado — Mesa "+selectedTable);
+    cart={};editingOrderId=null;
+    renderMesero();
+  });
+}
+
+function showToast(msg){
+  const t=document.createElement("div");t.className="toast";t.textContent=msg;
+  document.body.appendChild(t);setTimeout(()=>t.remove(),2200);
+}
+
+// ===== COCINA =====
 function renderCocina(){
   const active=ordersCache.filter(o=>o.status!=="entregado");
   const cols=[{key:"pendiente",label:"Pendiente"},{key:"preparacion",label:"En Preparación"},{key:"listo",label:"Listo 🔔"}];
-  const stats={
-    pendiente:active.filter(o=>o.status==="pendiente").length,
-    preparacion:active.filter(o=>o.status==="preparacion").length,
-    listo:active.filter(o=>o.status==="listo").length,
-    tarde:active.filter(o=>timerInfo(o).level==="late").length,
-  };
+  const stats={pendiente:active.filter(o=>o.status==="pendiente").length,preparacion:active.filter(o=>o.status==="preparacion").length,listo:active.filter(o=>o.status==="listo").length,tarde:active.filter(o=>timerInfo(o).level==="late").length};
   let html='<div class="stats-row">';
   html+=`<div class="stat-pill"><div class="stat-num">${stats.pendiente}</div><div class="stat-lbl">Pendientes</div></div>`;
   html+=`<div class="stat-pill"><div class="stat-num">${stats.preparacion}</div><div class="stat-lbl">En Preparación</div></div>`;
@@ -431,21 +508,18 @@ function renderCocina(){
   cols.forEach(col=>{
     const colOrders=active.filter(o=>o.status===col.key).sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt));
     html+=`<div><div class="k-col-title">${col.label} <span class="k-count">${colOrders.length}</span></div>`;
-    if(colOrders.length===0) html+=`<div class="empty-col">Sin órdenes</div>`;
+    if(colOrders.length===0)html+=`<div class="empty-col">Sin órdenes</div>`;
     colOrders.forEach(order=>{
       const t=timerInfo(order);
       const hora=new Date(order.createdAt).toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"});
       html+=`<div class="order-card ${t.level}"><div class="oc-bar"></div>`;
       html+=`<div class="oc-head"><span class="oc-mesa">Mesa ${order.table}</span><span class="oc-timer ${t.level}">${fmtRemaining(t.remaining)}</span></div>`;
       html+=`<div class="oc-meta">Entró hace ${t.elapsed} min · ${hora}</div>`;
-      (order.items||[]).forEach(it=>{
-        html+=`<div class="oc-item"><b>${it.qty}×</b> ${it.name}</div>`;
-        if(it.note) html+=`<div class="oc-note">↳ ${it.note}</div>`;
-      });
+      (order.items||[]).forEach(it=>{html+=`<div class="oc-item"><b>${it.qty}×</b> ${it.name}</div>`;if(it.note)html+=`<div class="oc-note">↳ ${it.note}</div>`;});
       html+=`<div class="oc-actions">`;
-      if(col.key==="pendiente") html+=`<button class="btn-start" onclick="updateStatus('${order.id}','preparacion')">Empezar</button>`;
-      if(col.key==="preparacion") html+=`<button class="btn-ready" onclick="updateStatus('${order.id}','listo')">Marcar listo</button>`;
-      if(col.key==="listo") html+=`<button class="btn-deliver" onclick="updateStatus('${order.id}','entregado')">Entregado ✓</button>`;
+      if(col.key==="pendiente")html+=`<button class="btn-start" onclick="updateStatus('${order.id}','preparacion')">Empezar</button>`;
+      if(col.key==="preparacion")html+=`<button class="btn-ready" onclick="updateStatus('${order.id}','listo')">Marcar listo</button>`;
+      if(col.key==="listo")html+=`<button class="btn-deliver" onclick="updateStatus('${order.id}','entregado')">Entregado ✓</button>`;
       html+=`</div></div>`;
     });
     html+="</div>";
@@ -453,22 +527,39 @@ function renderCocina(){
   html+="</div>";
   document.getElementById("cocina-body").innerHTML=html;
 }
-function updateStatus(id,status){ updateOrderStatus(id,status); }
+function updateStatus(id,status){updateOrderStatus(id,status);}
 
-// ===================== ADMIN =====================
+// ===== ADMIN =====
 function renderAdmin(){
+  if(detalleMesa!==null){renderDetalleMesa(detalleMesa);return;}
   const orders=ordersCache;
   const totalVentas=orders.reduce((sum,o)=>sum+o.items.reduce((s,it)=>s+(it.price||0)*it.qty,0),0);
   const dishCount={};
   orders.forEach(o=>o.items.forEach(it=>{dishCount[it.name]=(dishCount[it.name]||0)+it.qty;}));
   const topDishes=Object.entries(dishCount).sort((a,b)=>b[1]-a[1]).slice(0,8);
-  const sorted=[...orders];
   let html=`<div class="tabs">
+    <button class="tab-btn${adminTab==="cuentas"?" active":""}" onclick="setAdminTab('cuentas')">Cuentas por Mesa</button>
     <button class="tab-btn${adminTab==="resumen"?" active":""}" onclick="setAdminTab('resumen')">Resumen</button>
     <button class="tab-btn${adminTab==="historial"?" active":""}" onclick="setAdminTab('historial')">Historial</button>
     <button class="reset-btn" onclick="resetOrders()">🗑 Borrar todo</button>
   </div>`;
-  if(adminTab==="resumen"){
+  if(adminTab==="cuentas"){
+    const mesaOrders={};
+    orders.filter(o=>o.status!=="entregado").forEach(o=>{if(!mesaOrders[o.table])mesaOrders[o.table]=[];mesaOrders[o.table].push(o);});
+    html+=`<div class="mesas-grid">`;
+    for(let i=1;i<=NUM_MESAS;i++){
+      const ords=mesaOrders[i]||[];
+      const total=ords.reduce((s,o)=>s+o.items.reduce((ss,it)=>ss+(it.price||0)*it.qty,0),0);
+      const itemCount=ords.reduce((s,o)=>s+o.items.reduce((ss,it)=>ss+it.qty,0),0);
+      const ocupada=ords.length>0;
+      html+=`<div class="mesa-card ${ocupada?"ocupada":"libre"}" ${ocupada?`onclick="verDetalle(${i})"`:""}>`;
+      html+=`<div class="mc-head"><span class="mc-num">Mesa ${i}</span><span class="mc-chip ${ocupada?"ocupada":"libre"}">${ocupada?"Ocupada":"Libre"}</span></div>`;
+      if(ocupada){html+=`<div class="mc-total">${fmtCOP(total)}</div><div class="mc-info">${itemCount} ítems · ${ords.length} pedido${ords.length!==1?"s":""} · Toca para ver</div>`;}
+      else{html+=`<div style="font-size:13px;color:var(--teal);opacity:0.5;margin-top:4px;">Sin pedidos activos</div>`;}
+      html+=`</div>`;
+    }
+    html+="</div>";
+  } else if(adminTab==="resumen"){
     html+=`<div class="a-grid">
       <div class="a-card"><div class="a-num">${orders.length}</div><div class="a-lbl">Pedidos totales</div></div>
       <div class="a-card"><div class="a-num">${fmtCOP(totalVentas)}</div><div class="a-lbl">Ventas acumuladas</div></div>
@@ -476,24 +567,44 @@ function renderAdmin(){
       <div class="a-card"><div class="a-num">${orders.filter(o=>o.status==="entregado").length}</div><div class="a-lbl">Entregados</div></div>
     </div>`;
     html+=`<div class="a-title">Platos más pedidos</div><table><thead><tr><th>Plato</th><th>Cantidad</th></tr></thead><tbody>`;
-    if(topDishes.length===0) html+=`<tr><td colspan="2" style="text-align:center;opacity:0.5">Aún no hay pedidos</td></tr>`;
-    topDishes.forEach(([name,qty])=>{ html+=`<tr><td>${name}</td><td>${qty}</td></tr>`; });
+    if(topDishes.length===0)html+=`<tr><td colspan="2" style="text-align:center;opacity:0.5">Aún no hay pedidos</td></tr>`;
+    topDishes.forEach(([name,qty])=>{html+=`<tr><td>${name}</td><td>${qty}</td></tr>`;});
     html+=`</tbody></table>`;
   } else {
     html+=`<table><thead><tr><th>Mesa</th><th>Hora</th><th>Platos</th><th>Total</th><th>Estado</th></tr></thead><tbody>`;
-    if(sorted.length===0) html+=`<tr><td colspan="5" style="text-align:center;opacity:0.5">Aún no hay pedidos</td></tr>`;
-    sorted.forEach(o=>{
+    if(orders.length===0)html+=`<tr><td colspan="5" style="text-align:center;opacity:0.5">Aún no hay pedidos</td></tr>`;
+    orders.forEach(o=>{
       const tot=o.items.reduce((s,it)=>s+(it.price||0)*it.qty,0);
       const fecha=new Date(o.createdAt).toLocaleString("es-CO",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
-      const platos=o.items.map(it=>`${it.qty}× ${it.name}`).join(", ");
-      html+=`<tr><td>Mesa ${o.table}</td><td>${fecha}</td><td>${platos}</td><td>${fmtCOP(tot)}</td><td><span class="chip ${o.status}">${o.status}</span></td></tr>`;
+      html+=`<tr><td>Mesa ${o.table}</td><td>${fecha}</td><td>${o.items.map(it=>`${it.qty}× ${it.name}`).join(", ")}</td><td>${fmtCOP(tot)}</td><td><span class="chip ${o.status}">${o.status}</span></td></tr>`;
     });
     html+=`</tbody></table>`;
   }
   document.getElementById("admin-body").innerHTML=html;
 }
-function setAdminTab(t){ adminTab=t; renderAdmin(); }
-function resetOrders(){ if(!confirm("¿Borrar todos los pedidos?")) return; deleteAllOrders(); }
+function verDetalle(mesa){detalleMesa=mesa;renderDetalleMesa(mesa);}
+function renderDetalleMesa(mesa){
+  const mesaOrds=ordersCache.filter(o=>o.table===mesa&&o.status!=="entregado").sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt));
+  const grandTotal=mesaOrds.reduce((s,o)=>s+o.items.reduce((ss,it)=>ss+(it.price||0)*it.qty,0),0);
+  let html=`<div class="detalle-back" onclick="cerrarDetalle()">← Volver a mesas</div>`;
+  html+=`<div class="detalle-box">`;
+  html+=`<div class="detalle-title">Mesa ${mesa} <span style="font-size:14px;color:var(--ok)">Total: ${fmtCOP(grandTotal)}</span></div>`;
+  if(mesaOrds.length===0){html+=`<p style="opacity:0.5;font-size:13px;">No hay pedidos activos.</p>`;}
+  mesaOrds.forEach((o,idx)=>{
+    const hora=new Date(o.createdAt).toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"});
+    const subtotal=o.items.reduce((s,it)=>s+(it.price||0)*it.qty,0);
+    html+=`<div class="det-order"><div class="det-order-head">Pedido ${idx+1} · ${hora} · <span class="chip ${o.status}" style="font-size:10px;">${o.status}</span></div>`;
+    o.items.forEach(it=>{html+=`<div class="det-item"><span>${it.qty}× ${it.name}${it.note?` <em style="opacity:0.6;font-size:11px;">(${it.note})</em>`:""}</span><span>${fmtCOP((it.price||0)*it.qty)}</span></div>`;});
+    html+=`<div class="det-sub"><span>Subtotal</span><span>${fmtCOP(subtotal)}</span></div></div>`;
+  });
+  html+=`<div class="det-grand"><span>TOTAL MESA ${mesa}</span><span>${fmtCOP(grandTotal)}</span></div>`;
+  html+=`<button class="print-btn" onclick="window.print()">🖨 Imprimir cuenta</button>`;
+  html+=`</div>`;
+  document.getElementById("admin-body").innerHTML=html;
+}
+function cerrarDetalle(){detalleMesa=null;renderAdmin();}
+function setAdminTab(t){adminTab=t;detalleMesa=null;renderAdmin();}
+function resetOrders(){if(!confirm("¿Borrar todos los pedidos?"))return;deleteAllOrders();}
 </script>
 </body>
 </html>
