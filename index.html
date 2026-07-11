@@ -798,7 +798,7 @@ function renderDetalleMesa(mesa){
   // Factura
   h+='<div class="factura-print-area" id="fac-print">';
   h+='<div class="factura-wrap">';
-  h+=`<div class="factura-header"><div class="factura-logo">🐚 Mar y Sazón</div><div class="factura-sub">Restaurante de Mar · Sabores del Caribe y el Pacífico</div></div>`;
+  h+=`<div class="factura-header"><div class="factura-logo">La mar sabor peruano</div><div class="factura-sub">Restaurante de Mar · Sabores del Caribe y peruano</div></div>`;
   h+=`<div class="factura-meta"><span>Mesa ${mesa}</span><span>${ahora}</span></div>`;
   h+='<table class="fac-table"><thead><tr><th>Ítem</th><th>Cant.</th><th>P. Unit.</th><th>Total</th></tr></thead><tbody>';
   const renderItemRow=(it)=>{
@@ -834,7 +834,7 @@ function renderDetalleMesa(mesa){
   }
   h+=`<div class="fac-row total"><span>TOTAL</span><span>${fmtCOP(total)}</span></div>`;
   h+='</div>';
-  h+='<div class="fac-footer"><strong>¡Gracias por visitarnos!</strong>Esperamos verte pronto · Mar y Sazón</div>';
+  h+='<div class="fac-footer"><strong>¡Gracias por visitarnos!</strong>Esperamos verte pronto · La mar sabor peruano</div>';
   h+='</div></div>'; // factura-wrap, factura-print-area
 
   h+=`<div class="print-actions">
