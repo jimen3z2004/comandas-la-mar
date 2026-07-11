@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mar y Sazón — Comandas</title>
+<title>La Mar sabor peruano — Comandas</title>
 <style>
 :root{--deep:#0b2b2e;--teal:#16484b;--foam:#f4efe4;--sand:#e7ddc6;--coral:#d8662f;--coral-dark:#b94f1f;--gold:#c8973f;--ok:#3f7d52;--warn:#c8973f;--late:#b3402f;--line:rgba(11,43,46,0.12);--barra:#4a2d7a;}
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -142,7 +142,7 @@ td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;}tr:last
 /* FACTURA */
 .propina-toggle{display:flex;align-items:center;gap:10px;background:#fdf3da;border:1.5px solid var(--gold);border-radius:10px;padding:11px 14px;margin-bottom:13px;cursor:pointer;}
 .propina-toggle input{width:18px;height:18px;accent-color:var(--gold);cursor:pointer;}
-.propina-toggle label{font-size:14px;font-weight:700;color:#8a6a1a;cursor:pointer;}
+.propina-toggle label{font-size:14px;font-weight:700;color:#000000;cursor:pointer;}
 .factura-wrap{background:white;border-radius:12px;border:1px solid var(--line);padding:22px;max-width:420px;margin:0 auto;}
 .factura-header{text-align:center;margin-bottom:16px;border-bottom:2px dashed var(--line);padding-bottom:13px;}
 .factura-logo{font-size:24px;font-weight:800;color:var(--deep);}
@@ -189,28 +189,26 @@ td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;}tr:last
 #print-overlay .do-print{background:#d8662f;color:white;padding:10px 20px;border-radius:8px;font-weight:700;font-size:14px;margin-bottom:16px;display:inline-block;cursor:pointer;margin-left:10px;}
 @media print{
   body > *:not(#print-overlay){display:none !important;}
-  #print-overlay{display:block !important;position:static !important;padding:0 !important;background:white !important;}
+  #print-overlay{display:block !important;position:static !important;padding:0 !important;}
   #print-overlay .close-print,#print-overlay .do-print{display:none !important;}
-  /* NEGRO SÓLIDO EN TODO */
-  #print-overlay, #print-overlay *{
-    color:#000000 !important;
+  /* TODO EN NEGRO SÓLIDO */
+  #print-overlay *{
+    color:#000 !important;
     background:white !important;
-    background-color:white !important;
-    border-color:#999 !important;
+    border-color:#000 !important;
     opacity:1 !important;
-    text-shadow:none !important;
-    -webkit-print-color-adjust:exact !important;
-    print-color-adjust:exact !important;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
   }
-  #print-overlay .cmd-mesa{font-size:26px !important;font-weight:900 !important;}
-  #print-overlay .cmd-item{font-size:15px !important;font-weight:600 !important;}
-  #print-overlay .cmd-footer{color:#000 !important;font-size:12px !important;}
-  #print-overlay .fac-row{color:#000 !important;font-size:13px !important;}
-  #print-overlay .fac-row.total{font-size:20px !important;font-weight:900 !important;}
-  #print-overlay .fac-row.sub span,#print-overlay .fac-row.prop span,#print-overlay .fac-row.prop-note span{color:#000 !important;}
-  #print-overlay .fac-footer, #print-overlay .fac-footer *{color:#000 !important;font-size:12px !important;}
-  #print-overlay .factura-sub{color:#000 !important;font-size:12px !important;}
-  #print-overlay .factura-meta, #print-overlay .factura-meta *{color:#000 !important;}
+  #print-overlay .cmd-mesa{font-size:28px !important;font-weight:900 !important;}
+  #print-overlay .cmd-item{font-size:16px !important;}
+  #print-overlay .fac-row.total{font-size:20px !important;font-weight:900 !important;border-top:2px solid #000 !important;}
+  #print-overlay .fac-row.prop{color:#000 !important;font-weight:700 !important;}
+  #print-overlay .fac-cat-row td{color:#000 !important;font-weight:700 !important;}
+  #print-overlay .fac-table td, #print-overlay .fac-table th{color:#000 !important;border-color:#ccc !important;}
+  #print-overlay .fac-footer{color:#000 !important;border-color:#ccc !important;}
+  #print-overlay .factura-header{border-color:#ccc !important;}
+  #print-overlay .fac-totales{border-color:#ccc !important;}
 }
 .comanda-sheet{max-width:320px;margin-bottom:20px;}
 .cmd-head{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px dashed #333;padding-bottom:7px;margin-bottom:9px;}
@@ -227,7 +225,7 @@ td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;}tr:last
 <body>
 
 <div id="launcher">
-  <div class="l-mark">Mar y Sazón</div>
+  <div class="l-mark">La Mar sabor peruano</div>
   <div class="l-title">Comandas Digitales</div>
   <p class="l-sub">Elige tu estación</p>
   <div class="l-grid">
@@ -242,7 +240,7 @@ td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;}tr:last
 <div id="mesero-view" style="display:none">
   <div class="topbar">
     <button class="topbar-back" onclick="showView('launcher')">← Volver</button>
-    <span class="topbar-brand">Mar y Sazón</span>
+    <span class="topbar-brand">La Mar sabor peruano</span>
     <span class="topbar-role"><span class="conn-dot" id="m-dot"></span>Mesero</span>
   </div>
   <div id="mesero-body"></div>
@@ -265,7 +263,7 @@ td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;}tr:last
 </div>
 
 <div id="admin-view" style="display:none">
-  <div class="topbar"><button class="topbar-back" onclick="showView('launcher')">← Volver</button><span class="topbar-brand">Mar y Sazón</span><span class="topbar-role"><span class="conn-dot" id="a-dot"></span>Admin</span></div>
+  <div class="topbar"><button class="topbar-back" onclick="showView('launcher')">← Volver</button><span class="topbar-brand">La Mar sabor peruano</span><span class="topbar-role"><span class="conn-dot" id="a-dot"></span>Admin</span></div>
   <div id="admin-body"></div>
 </div>
 
@@ -577,7 +575,7 @@ function buildComandaHTML(order){
     </div>
     ${order.scheduledTime?`<div class="cmd-prog">🕐 Para las ${order.scheduledTime}</div>`:""}
     ${(order.items||[]).map(it=>`<div class="cmd-item"><b>${it.qty}×</b> ${it.name}</div>${it.note?`<div class="cmd-note">↳ ${it.note}</div>`:""}`).join("")}
-    <div class="cmd-footer">Mar y Sazón · ${new Date().toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"})}</div>
+    <div class="cmd-footer">La Mar sabor peruano · ${new Date().toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"})}</div>
   </div>`;
 }
 
@@ -629,22 +627,21 @@ function printFactura(){
     body{font-family:system-ui,sans-serif;padding:24px;background:white;max-width:480px;margin:0 auto;}
     .factura-header{text-align:center;margin-bottom:16px;border-bottom:2px dashed #ccc;padding-bottom:13px;}
     .factura-logo{font-size:24px;font-weight:800;}
-    .factura-sub{font-size:12px;color:#333;margin-top:3px;}
-    .factura-meta{font-size:12px;color:#333;margin-bottom:14px;display:flex;justify-content:space-between;font-weight:600;}
+    .factura-sub{font-size:12px;color:#666;margin-top:3px;}
+    .factura-meta{font-size:12px;color:#555;margin-bottom:14px;display:flex;justify-content:space-between;}
     .fac-table{width:100%;border-collapse:collapse;margin-bottom:13px;}
     .fac-table th{font-size:11px;text-transform:uppercase;color:#777;padding:5px 0;border-bottom:1px solid #ddd;text-align:left;}
     .fac-table th:last-child,.fac-table td:last-child{text-align:right;}
-    .fac-table th,.fac-table td{padding:6px 4px;font-size:13px;}
-    .fac-table td{border-bottom:1px solid #f0f0f0;}
-    .fac-cat-row td{font-size:11px;font-weight:800;color:#000;padding-top:11px;text-transform:uppercase;border-bottom:none;}
-    .fac-totales{border-top:2px dashed #555;padding-top:9px;}
-    .fac-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;}
-    .fac-row.sub{color:#333;font-weight:600;}
-    .fac-row.prop{color:#333;font-weight:700;}
-    .fac-row.prop-note{color:#444;font-size:11px;font-style:italic;}
-    .fac-row.total{font-size:20px;font-weight:900;border-top:2px solid #000;margin-top:8px;padding-top:9px;color:#000;}
-    .fac-footer{text-align:center;margin-top:16px;padding-top:13px;border-top:2px dashed #555;font-size:12px;color:#333;}
-    .fac-footer strong{display:block;font-size:14px;color:#000;font-weight:800;margin-bottom:3px;}
+    .fac-table td{padding:6px 0;font-size:13px;border-bottom:1px solid #f0f0f0;}
+    .fac-cat-row td{font-size:11px;font-weight:700;color:#777;padding-top:11px;text-transform:uppercase;border-bottom:none;}
+    .fac-totales{border-top:1px dashed #ccc;padding-top:9px;}
+    .fac-row{display:flex;justify-content:space-between;font-size:13px;padding:3px 0;}
+    .fac-row.sub{color:#666;}
+    .fac-row.prop{color:#c8973f;font-weight:700;}
+    .fac-row.prop-note{color:#888;font-size:11px;font-style:italic;}
+    .fac-row.total{font-size:20px;font-weight:800;border-top:2px solid #0b2b2e;margin-top:8px;padding-top:9px;}
+    .fac-footer{text-align:center;margin-top:16px;padding-top:13px;border-top:2px dashed #ccc;font-size:12px;color:#666;}
+    .fac-footer strong{display:block;font-size:14px;color:#0b2b2e;margin-bottom:3px;}
     .no-print{text-align:center;margin-top:20px;}
     .no-print button{padding:10px 24px;font-size:14px;background:#0b2b2e;color:white;border:none;border-radius:8px;cursor:pointer;}
     @media print{.no-print{display:none!important;}}
