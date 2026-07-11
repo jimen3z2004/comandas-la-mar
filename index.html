@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title> La Mar sabor peruano — Comandas</title>
+<title>La Mar sabor peruano — Comandas</title>
 <style>
 :root{--deep:#0b2b2e;--teal:#16484b;--foam:#f4efe4;--sand:#e7ddc6;--coral:#d8662f;--coral-dark:#b94f1f;--gold:#c8973f;--ok:#3f7d52;--warn:#c8973f;--late:#b3402f;--line:rgba(11,43,46,0.12);--barra:#4a2d7a;}
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -225,7 +225,7 @@ td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;}tr:last
 <body>
 
 <div id="launcher">
-  <div class="l-mark">Mar y Sazón</div>
+  <div class="l-mark">La Mar sabor peruano</div>
   <div class="l-title">Comandas Digitales</div>
   <p class="l-sub">Elige tu estación</p>
   <div class="l-grid">
@@ -240,7 +240,7 @@ td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;}tr:last
 <div id="mesero-view" style="display:none">
   <div class="topbar">
     <button class="topbar-back" onclick="showView('launcher')">← Volver</button>
-    <span class="topbar-brand">Mar y Sazón</span>
+    <span class="topbar-brand">La Mar sabor peruano</span>
     <span class="topbar-role"><span class="conn-dot" id="m-dot"></span>Mesero</span>
   </div>
   <div id="mesero-body"></div>
@@ -263,7 +263,7 @@ td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;}tr:last
 </div>
 
 <div id="admin-view" style="display:none">
-  <div class="topbar"><button class="topbar-back" onclick="showView('launcher')">← Volver</button><span class="topbar-brand">Mar y Sazón</span><span class="topbar-role"><span class="conn-dot" id="a-dot"></span>Admin</span></div>
+  <div class="topbar"><button class="topbar-back" onclick="showView('launcher')">← Volver</button><span class="topbar-brand">La Mar sabor peruano</span><span class="topbar-role"><span class="conn-dot" id="a-dot"></span>Admin</span></div>
   <div id="admin-body"></div>
 </div>
 
@@ -575,7 +575,7 @@ function buildComandaHTML(order){
     </div>
     ${order.scheduledTime?`<div class="cmd-prog">🕐 Para las ${order.scheduledTime}</div>`:""}
     ${(order.items||[]).map(it=>`<div class="cmd-item"><b>${it.qty}×</b> ${it.name}</div>${it.note?`<div class="cmd-note">↳ ${it.note}</div>`:""}`).join("")}
-    <div class="cmd-footer">Mar y Sazón · ${new Date().toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"})}</div>
+    <div class="cmd-footer">La Mar sabor peruano · ${new Date().toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"})}</div>
   </div>`;
 }
 
