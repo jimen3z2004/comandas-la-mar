@@ -173,6 +173,16 @@ td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;}tr:last
 .inv-table tr:last-child td{border-bottom:none;}
 .inv-table input[type=number]{border:1px solid var(--line);border-radius:6px;padding:5px 8px;font-size:13px;width:70px;text-align:center;background:var(--foam);}
 .inv-save-btn{background:var(--ok);color:white;padding:10px 20px;border-radius:8px;font-weight:700;font-size:14px;margin-top:12px;}
+/* PRECIOS VARIABLES */
+.precio-var-badge{font-size:11px;background:#fdf3da;color:#8a6a1a;padding:2px 8px;border-radius:20px;font-weight:700;margin-left:6px;}
+.precio-var-input{border:1.5px solid var(--gold);border-radius:7px;padding:5px 8px;font-size:13px;width:100px;background:var(--foam);margin-top:4px;}
+.precios-var-box{background:white;border:2px solid var(--gold);border-radius:12px;margin:0 16px 16px;padding:14px;}
+.precios-var-title{font-size:12px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px;}
+.pv-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line);}
+.pv-row:last-child{border-bottom:none;}
+.pv-name{font-size:13px;font-weight:600;flex:1;}
+.pv-input{border:1.5px solid var(--line);border-radius:7px;padding:6px 9px;font-size:13px;width:110px;background:var(--foam);}
+.pv-save-btn{background:var(--gold);color:white;padding:9px 18px;border-radius:8px;font-weight:700;font-size:13px;margin-top:12px;width:100%;}
 /* IMPRESIÓN UNIVERSAL - funciona en Edge, Chrome y celular */
 #print-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:white;z-index:9999;padding:20px;overflow-y:auto;}
 #print-overlay .close-print{background:#0b2b2e;color:white;padding:10px 20px;border-radius:8px;font-weight:700;font-size:14px;margin-bottom:16px;display:inline-block;cursor:pointer;}
@@ -181,7 +191,24 @@ td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;}tr:last
   body > *:not(#print-overlay){display:none !important;}
   #print-overlay{display:block !important;position:static !important;padding:0 !important;}
   #print-overlay .close-print,#print-overlay .do-print{display:none !important;}
-  .fac-row,.fac-row.sub,.fac-row.prop,.fac-row.prop-note,.fac-table td,.fac-table th,.factura-sub,.factura-meta,.fac-footer{color:#000 !important;opacity:1 !important;font-weight:700 !important;}
+  /* TODO EN NEGRO SÓLIDO */
+  #print-overlay *{
+    color:#000 !important;
+    background:white !important;
+    border-color:#000 !important;
+    opacity:1 !important;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  #print-overlay .cmd-mesa{font-size:28px !important;font-weight:900 !important;}
+  #print-overlay .cmd-item{font-size:16px !important;}
+  #print-overlay .fac-row.total{font-size:20px !important;font-weight:900 !important;border-top:2px solid #000 !important;}
+  #print-overlay .fac-row.prop{color:#000 !important;font-weight:700 !important;}
+  #print-overlay .fac-cat-row td{color:#000 !important;font-weight:700 !important;}
+  #print-overlay .fac-table td, #print-overlay .fac-table th{color:#000 !important;border-color:#ccc !important;}
+  #print-overlay .fac-footer{color:#000 !important;border-color:#ccc !important;}
+  #print-overlay .factura-header{border-color:#ccc !important;}
+  #print-overlay .fac-totales{border-color:#ccc !important;}
 }
 .comanda-sheet{max-width:320px;margin-bottom:20px;}
 .cmd-head{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px dashed #333;padding-bottom:7px;margin-bottom:9px;}
@@ -278,12 +305,19 @@ const PREP_MIN=60, NUM_MESAS=18;
 let selectedTable=null, cart={}, currentView="launcher";
 let ordersCache=[], inventory={}, fbOrderListener=null, fbInvListener=null;
 let adminTab="cuentas", detalleMesa=null, editingOrderId=null, scheduledTime=null, incluyePropina=true;
+let preciosVar={}; // precios del día para platos sin precio fijo
 
 // ── Helpers ──
 function fmtCOP(n){return n==null?"según disp.":"$"+n.toLocaleString("es-CO");}
 function minSince(iso){return Math.floor((Date.now()-new Date(iso).getTime())/60000);}
 function isBev(id){const g=MENU.find(g=>g.cat===BEV_CAT);return g?!!g.items.find(i=>i.id===id):false;}
-function getMeta(id){return MENU.flatMap(g=>g.items).find(i=>i.id===id)||null;}
+function getMeta(id){
+  const item=MENU.flatMap(g=>g.items).find(i=>i.id===id)||null;
+  if(item&&item.price===null&&preciosVar[id]!=null){
+    return {...item,price:preciosVar[id]};
+  }
+  return item;
+}
 function getOccupied(){const s=new Set();ordersCache.filter(o=>o.status!=="entregado").forEach(o=>s.add(o.table));return s;}
 function getEditables(t){return ordersCache.filter(o=>o.table===t&&(o.status==="pendiente"||o.status==="preparacion"));}
 function timerInfo(o){
@@ -306,6 +340,10 @@ function startListeners(onOrders){
     const d=snap.val()||{};
     ordersCache=Object.values(d).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
     onOrders();
+  });
+  db.ref("precios_var").on("value",snap=>{
+    preciosVar=snap.val()||{};
+    if(currentView==="mesero")renderMesero();
   });
   fbInvListener=db.ref("inventory").on("value",snap=>{
     inventory=snap.val()||{};
@@ -408,6 +446,9 @@ function renderMesero(){
       group.items.forEach(item=>{
         const c=cart[item.id]||{qty:0,note:""};
         if(editingOrderId&&c.qty>0)return;
+        // Usar precio variable si existe
+        const itemConPrecio=getMeta(item.id)||item;
+        const precioMostrar=itemConPrecio.price;
         const stock=inventory[item.id];
         const unlimited=stock===undefined||stock===null;
         const agotado=!unlimited&&stock<=0;
@@ -418,7 +459,7 @@ function renderMesero(){
           else if(low)badge=`<span class="inv-badge low">Quedan ${stock}</span>`;
           else badge=`<span class="inv-badge ok">${stock} disp.</span>`;
         }
-        h+=`<div class="dish-row${bev?" bev-dish":""}${agotado?" agotado":""}"><div style="flex:1"><div class="dish-name">${item.name}${badge}</div><div class="dish-price">${fmtCOP(item.price)}</div>${bev?'<span class="bev-tag">🍹 Va a Barra</span>':""}</div>`;
+        h+=`<div class="dish-row${bev?" bev-dish":""}${agotado?" agotado":""}"><div style="flex:1"><div class="dish-name">${item.name}${badge}</div><div class="dish-price">${fmtCOP(precioMostrar)}${item.price===null&&precioMostrar!=null?'<span class="precio-var-badge">precio de hoy</span>':item.price===null&&precioMostrar==null?'<span class="precio-var-badge" style="background:#fdeee1;color:var(--late);">sin precio aún</span>':'' }</div>${bev?'<span class="bev-tag">🍹 Va a Barra</span>':""}</div>`;
         if(!editingOrderId&&c.qty>0){
           h+=`<div class="qty-row"><button onclick="decItem('${item.id}')">−</button><span>${c.qty}</span><button onclick="addItem('${item.id}')">+</button></div>`;
         } else if(agotado){
@@ -625,6 +666,7 @@ function renderAdmin(){
     <button class="tab-btn${adminTab==="cuentas"?" active":""}" onclick="setAdminTab('cuentas')">Cuentas por Mesa</button>
     <button class="tab-btn${adminTab==="resumen"?" active":""}" onclick="setAdminTab('resumen')">Resumen</button>
     <button class="tab-btn${adminTab==="historial"?" active":""}" onclick="setAdminTab('historial')">Historial</button>
+    <button class="tab-btn${adminTab==="precios"?" active":""}" onclick="setAdminTab('precios')">💲 Precios del Día</button>
     <button class="tab-btn${adminTab==="inventario"?" active":""}" onclick="setAdminTab('inventario')">📦 Inventario</button>
     <button class="reset-btn" onclick="resetOrders()">🗑 Borrar todo</button>
   </div>`;
@@ -669,6 +711,20 @@ function renderAdmin(){
     });
     h+='</tbody></table>';
   }
+  else if(adminTab==="precios"){
+    const sinPrecio=MENU.flatMap(g=>g.items).filter(i=>i.price===null);
+    h+='<p style="font-size:13px;color:var(--teal);opacity:0.7;margin-bottom:14px;">Estos platos no tienen precio fijo. Pon el precio del día antes de abrir el restaurante. Se guardan en Firebase y los meseros los verán al instante.</p>';
+    h+='<form onsubmit="savePreciosVar(event)">';
+    h+='<table class="inv-table"><thead><tr><th>Plato</th><th>Precio hoy</th><th>Estado</th></tr></thead><tbody>';
+    sinPrecio.forEach(item=>{
+      const cur=preciosVar[item.id];
+      const val=cur!=null?cur:"";
+      const estado=val===""?'<span style="color:var(--late);font-weight:700;">Sin precio</span>':`<span style="color:var(--ok);font-weight:700;">${fmtCOP(val)}</span>`;
+      h+=`<tr><td>${item.name}</td><td><input type="number" min="0" max="9999999" name="${item.id}" value="${val}" placeholder="Ej: 55000"/></td><td>${estado}</td></tr>`;
+    });
+    h+='</tbody></table>';
+    h+='<button type="submit" class="inv-save-btn" style="background:var(--gold);">💾 Guardar precios del día</button></form>';
+  }
   else if(adminTab==="inventario"){
     h+='<div class="inv-wrap"><p style="font-size:13px;color:var(--teal);opacity:0.7;margin-bottom:14px;">Configura cuántas unidades hay de cada plato. Vacío = ilimitado.</p>';
     h+='<form onsubmit="saveInventory(event)">';
@@ -691,13 +747,27 @@ function renderAdmin(){
 
 function setAdminTab(t){adminTab=t;detalleMesa=null;renderAdmin();}
 function verDetalle(mesa){detalleMesa=mesa;renderDetalleMesa(mesa);}
-function cerrarDetalle(){detalleMesa=null;renderAdmin();}
+function cerrarDetalle(){detalleMesa=null;window._preciosTemp={};renderAdmin();}
 
 function togglePropina(){incluyePropina=!incluyePropina;renderDetalleMesa(detalleMesa);}
 
 function renderDetalleMesa(mesa){
   const mesaOrds=ordersCache.filter(o=>o.table===mesa&&o.status!=="entregado").sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt));
-  const subtotal=mesaOrds.reduce((s,o)=>s+o.items.reduce((ss,it)=>ss+(it.price||0)*it.qty,0),0);
+  // Calcular subtotal incluyendo precios temporales de platos sin precio
+  const subtotal=(()=>{
+    let total=0;
+    mesaOrds.forEach(o=>{
+      o.items.forEach(it=>{
+        if(it.price!=null&&it.price>0){
+          total+=it.price*it.qty;
+        } else {
+          const key=it.id+"_"+it.name;
+          total+=(window._preciosTemp&&window._preciosTemp[key]?parseInt(window._preciosTemp[key])||0:0)*it.qty;
+        }
+      });
+    });
+    return total;
+  })();
   const propina=incluyePropina?Math.round(subtotal*0.1):0;
   const total=subtotal+propina;
   const ahora=new Date().toLocaleString("es-CO",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"});
@@ -707,12 +777,15 @@ function renderDetalleMesa(mesa){
   mesaOrds.forEach(o=>{
     const map=o.type==="barra"?bevMap:foodMap;
     o.items.forEach(it=>{
-      if(!map[it.name])map[it.name]={name:it.name,price:it.price||0,qty:0};
-      map[it.name].qty+=it.qty;
+      const key=it.id+"_"+it.name;
+      if(!map[key])map[key]={id:it.id,name:it.name,price:it.price||0,qty:0,sinPrecio:it.price===null||it.price===0};
+      map[key].qty+=it.qty;
     });
   });
   const foodItems=Object.values(foodMap);
   const bevItems=Object.values(bevMap);
+  // Precios editables para platos sin precio fijo (se guardan en memoria temporal)
+  if(!window._preciosTemp)window._preciosTemp={};
 
   let h=`<div class="detalle-back" onclick="cerrarDetalle()">← Volver a mesas</div>`;
 
@@ -728,13 +801,28 @@ function renderDetalleMesa(mesa){
   h+=`<div class="factura-header"><div class="factura-logo">🐚 Mar y Sazón</div><div class="factura-sub">Restaurante de Mar · Sabores del Caribe y el Pacífico</div></div>`;
   h+=`<div class="factura-meta"><span>Mesa ${mesa}</span><span>${ahora}</span></div>`;
   h+='<table class="fac-table"><thead><tr><th>Ítem</th><th>Cant.</th><th>P. Unit.</th><th>Total</th></tr></thead><tbody>';
+  const renderItemRow=(it)=>{
+    const key=it.id+"_"+it.name;
+    const precioFinal=it.sinPrecio?(window._preciosTemp[key]||0):it.price;
+    const sinPrecio=it.sinPrecio;
+    if(sinPrecio){
+      return `<tr><td>${it.name} <span style="font-size:10px;background:#fdf3da;color:#8a6a1a;padding:1px 6px;border-radius:8px;font-weight:700;">según peso</span></td>
+        <td style="text-align:center">${it.qty}</td>
+        <td><input type="number" min="0" placeholder="$ precio" value="${window._preciosTemp[key]||""}"
+          style="border:2px solid var(--gold);border-radius:6px;padding:4px 7px;font-size:13px;width:100px;"
+          oninput="setPrecioTemp('${key}',this.value)"
+        /></td>
+        <td style="font-weight:700;">${precioFinal>0?fmtCOP(precioFinal*it.qty):'—'}</td></tr>`;
+    }
+    return `<tr><td>${it.name}</td><td style="text-align:center">${it.qty}</td><td>${fmtCOP(it.price)}</td><td>${fmtCOP(it.price*it.qty)}</td></tr>`;
+  };
   if(foodItems.length>0){
     h+='<tr class="fac-cat-row"><td colspan="4">🍽 Cocina</td></tr>';
-    foodItems.forEach(it=>{h+=`<tr><td>${it.name}</td><td style="text-align:center">${it.qty}</td><td>${fmtCOP(it.price)}</td><td>${fmtCOP(it.price*it.qty)}</td></tr>`;});
+    foodItems.forEach(it=>{h+=renderItemRow(it);});
   }
   if(bevItems.length>0){
     h+='<tr class="fac-cat-row"><td colspan="4">🍹 Barra</td></tr>';
-    bevItems.forEach(it=>{h+=`<tr><td>${it.name}</td><td style="text-align:center">${it.qty}</td><td>${fmtCOP(it.price)}</td><td>${fmtCOP(it.price*it.qty)}</td></tr>`;});
+    bevItems.forEach(it=>{h+=renderItemRow(it);});
   }
   if(foodItems.length===0&&bevItems.length===0)h+='<tr><td colspan="4" style="text-align:center;opacity:0.5">Sin pedidos activos</td></tr>';
   h+='</tbody></table>';
@@ -766,6 +854,24 @@ function saveInventory(e){
     if(el){const v=el.value.trim();updates["inventory/"+item.id]=v===""?null:parseInt(v)||0;}
   });});
   db.ref().update(updates).then(()=>showToast("✓ Inventario guardado"));
+}
+
+function setPrecioTemp(key, val){
+  if(!window._preciosTemp) window._preciosTemp={};
+  window._preciosTemp[key]=parseInt(val)||0;
+  // Recalcular totales sin re-renderizar todo
+  renderDetalleMesa(detalleMesa);
+}
+
+function savePreciosVar(e){
+  e.preventDefault();
+  const form=e.target;
+  const updates={};
+  MENU.flatMap(g=>g.items).filter(i=>i.price===null).forEach(item=>{
+    const el=form.elements[item.id];
+    if(el){const v=el.value.trim();updates["precios_var/"+item.id]=v===""?null:parseInt(v)||null;}
+  });
+  db.ref().update(updates).then(()=>showToast("✓ Precios del día guardados"));
 }
 
 function resetOrders(){if(!confirm("¿Borrar todos los pedidos?"))return;db.ref("orders").remove();}
