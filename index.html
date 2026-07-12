@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mar y Sazón — Comandas</title>
+<title>La mar sabor peruano — Comandas</title>
 <style>
 :root{--deep:#0b2b2e;--teal:#16484b;--foam:#f4efe4;--sand:#e7ddc6;--coral:#d8662f;--coral-dark:#b94f1f;--gold:#c8973f;--ok:#3f7d52;--warn:#c8973f;--late:#b3402f;--line:rgba(11,43,46,0.12);--barra:#4a2d7a;}
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -229,7 +229,7 @@ td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;}tr:last
 <body>
 
 <div id="launcher">
-  <div class="l-mark">Mar y Sazón</div>
+  <div class="l-mark">La mar sabor peruano</div>
   <div class="l-title">Comandas Digitales</div>
   <p class="l-sub">Elige tu estación</p>
   <div class="l-grid">
@@ -244,7 +244,7 @@ td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;}tr:last
 <div id="mesero-view" style="display:none">
   <div class="topbar">
     <button class="topbar-back" onclick="showView('launcher')">← Volver</button>
-    <span class="topbar-brand">Mar y Sazón</span>
+    <span class="topbar-brand">La mar sabor peruano</span>
     <span class="topbar-role"><span class="conn-dot" id="m-dot"></span>Mesero</span>
   </div>
   <div id="mesero-body"></div>
@@ -267,7 +267,7 @@ td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;}tr:last
 </div>
 
 <div id="admin-view" style="display:none">
-  <div class="topbar"><button class="topbar-back" onclick="showView('launcher')">← Volver</button><span class="topbar-brand">Mar y Sazón</span><span class="topbar-role"><span class="conn-dot" id="a-dot"></span>Admin</span></div>
+  <div class="topbar"><button class="topbar-back" onclick="showView('launcher')">← Volver</button><span class="topbar-brand">La mar sabor peruano</span><span class="topbar-role"><span class="conn-dot" id="a-dot"></span>Admin</span></div>
   <div id="admin-body"></div>
 </div>
 
@@ -293,19 +293,19 @@ const MENU = [
   {cat:"Para Comenzar",items:[{id:"tiradito",name:"Tiradito de Pescado",price:41000},{id:"cev_carretillero",name:"Ceviche Carretillero",price:48000},{id:"cev_mixto",name:"Ceviche Mixto",price:58000},{id:"coctel_camaron",name:"Coctel de Camarón",price:32000},{id:"cev_limeno",name:"Ceviche Limeño",price:75000},{id:"anillos_calamar",name:"Anillos de Calamar",price:45000},{id:"pulpo_vinagreta",name:"Pulpo a la Vinagreta",price:48000}]},
   {cat:"Para Compartir",items:[{id:"huevas_pescado",name:"Huevas de Pescado",price:55900},{id:"bocaditos_bacalao",name:"Bocaditos de Bacalao",price:48000},{id:"canastillas_camaron",name:"Canastillas de Camarón a la Huancaína",price:55000},{id:"langostinos_dinamita",name:"Langostinos Dinamita",price:65000},{id:"mariscada_parrilla",name:"Mariscada a la Parrilla",price:180000}]},
   {cat:"Sopas & Cremas",items:[{id:"sopa_levantamuertos",name:"Sopa Levantamuertos",price:30000},{id:"cazuela_mar_leva",name:"Cazuela Mar de Leva",price:60000},{id:"chupe_camaron",name:"Chupe de Camarón",price:55000},{id:"sopa_casa",name:"Sopa de la Casa",price:15000}]},
-  {cat:"Fritos del Mar",items:[{id:"mojarra",name:"Mojarra Roja / Negra",price:40000},{id:"robalo_posta",name:"Robalo Posta",price:57000},{id:"posta_sierra",name:"Posta de Sierra",price:48000},{id:"pargo_rojo",name:"Pargo Rojo",price:null},{id:"lebranche",name:"Lebranche",price:null},{id:"sabalo",name:"Sábalo",price:null},{id:"mero",name:"Mero",price:null}]},
-  {cat:"Especiales del Mar",items:[{id:"salmon_finas_hierbas",name:"Salmón a las Finas Hierbas",price:65000},{id:"salmon_pina_naranja",name:"Salmón en Piña Naranja",price:68000},{id:"salmon_toscana",name:"Salmón en Salsa Toscana",price:69000},{id:"salmon_huancaina",name:"Salmón a la Huancaína con Camarones",price:75000},{id:"robalo_ajillo",name:"Robalo al Ajillo",price:65000},{id:"robalo_encocado",name:"Robalo Encocado",price:58000},{id:"filete_mar",name:"Filete de Pescado a la Mar",price:68000},{id:"robalo_limon",name:"Robalo al Limón",price:60000},{id:"filete_relleno",name:"Filete de Pescado Relleno",price:70000},{id:"sierra_encocada",name:"Sierra Encocada",price:55000},{id:"escabeche",name:"Escabeche (Sierra o Barracuda)",price:65000},{id:"langostinos_encocados",name:"Langostinos Encocados",price:60000},{id:"camarones_ajillo",name:"Camarones al Ajillo",price:58000},{id:"langosta",name:"Langosta",price:null},{id:"pulpo_grill",name:"Pulpo al Grill",price:60000},{id:"pulpo_ajillo",name:"Pulpo al Ajillo",price:65000}]},
+  {cat:"Fritos del Mar",items:[{id:"mojarra",name:"Mojarra Roja / Negra",price:42000},{id:"robalo_posta",name:"Robalo Posta",price:57000},{id:"posta_sierra",name:"Posta de Sierra",price:55000},{id:"pargo_rojo",name:"Pargo Rojo",price:null},{id:"lebranche",name:"Lebranche",price:null},{id:"sabalo",name:"Sábalo",price:null},{id:"mero",name:"Mero",price:null}]},
+  {cat:"Especiales del Mar",items:[{id:"salmon_finas_hierbas",name:"Salmón a las Finas Hierbas",price:65000},{id:"salmon_pina_naranja",name:"Salmón en Piña Naranja",price:68000},{id:"salmon_toscana",name:"Salmón en Salsa Toscana",price:69000},{id:"salmon_huancaina",name:"Salmón a la Huancaína con Camarones",price:75000},{id:"robalo_ajillo",name:"Robalo al Ajillo",price:65000},{id:"robalo_encocado",name:"Robalo Encocado",price:58000},{id:"filete_mar",name:"Filete de Pescado a la Mar",price:68000},{id:"robalo_limon",name:"Robalo al Limón",price:60000},{id:"robalo_al_horno",name:"robalo al horno",price:75000},{id:"sierra_encocada",name:"Sierra Encocada",price:55000},{id:"escabeche",name:"Escabeche (Sierra o Barracuda)",price:65000},{id:"langostinos_encocados",name:"Langostinos Encocados",price:60000},{id:"camarones_ajillo",name:"Camarones al Ajillo",price:58000},{id:"langosta",name:"Langosta",price:null},{id:"pulpo_grill",name:"Pulpo al Grill",price:60000},{id:"pulpo_ajillo",name:"Pulpo al Ajillo",price:65000}]},
   {cat:"Combinados Marinos",items:[{id:"el_tradicional",name:"El Tradicional",price:79000},{id:"el_limeno",name:"El Limeño",price:79000},{id:"el_poseidon",name:"El Poseidón",price:79000},{id:"el_pescador",name:"El Pescador",price:80000}]},
-  {cat:"Arroces de la Casa",items:[{id:"risotto_huancaina",name:"Risotto a la Huancaína",price:75000},{id:"arroz_camaron_coco",name:"Arroz Cremoso de Camarón con Coco",price:65000},{id:"arroz_camaron",name:"Arroz de Camarón",price:49900},{id:"risotto_tinta",name:"Risotto en Tinta de Calamar",price:75000},{id:"arroz_chaufa",name:"Arroz Chaufa de Mariscos",price:59000}]},
+  {cat:"Arroces de la Casa",items:[{id:"risotto_huancaina",name:"Risotto a la Huancaína",price:75000},{id:"arroz_camaron_coco",name:"Arroz Cremoso de Camarón con Coco",price:65000},{id:"arroz_camaron",name:"Arroz de Camarón",price:58000},{id:"risotto_tinta",name:"Risotto en Tinta de Calamar",price:75000},{id:"arroz_chaufa",name:"Arroz Chaufa de Mariscos",price:65000}]},
   {cat:"Pastas",items:[{id:"fetuccini_camaron",name:"Fetuccini con Camarón",price:48000},{id:"fetuccini_tinta",name:"Fetuccini en Tinta de Calamar con Langostinos",price:55000},{id:"linguini_frutos_mar",name:"Linguini Frutos del Mar",price:60000},{id:"fetuccini_huancaina",name:"Fetuccini en Salsa Huancaína",price:60000},{id:"fetuccini_verde",name:"Fetuccini Verde",price:60000}]},
-  {cat:"De la Tierra",items:[{id:"baby_beef",name:"Baby Beef",price:60000},{id:"lomo_saltado",name:"Lomo Saltado",price:58000},{id:"lomo_pimienta",name:"Lomo a la Pimienta",price:65000},{id:"mar_y_tierra",name:"Mar y Tierra",price:87900},{id:"pechuga_hierbas",name:"Pechuga Finas Hierbas",price:38000},{id:"pechuga_gratinada",name:"Pechuga Gratinada",price:48900},{id:"pollo_saltado",name:"Pollo Saltado",price:49900}]},
+  {cat:"De la Tierra",items:[{id:"baby_beef",name:"Baby Beef",price:60000},{id:"lomo_saltado",name:"Lomo Saltado",price:65000},{id:"lomo_pimienta",name:"Lomo a la Pimienta",price:65000},{id:"mar_y_tierra",name:"Mar y Tierra",price:87900},{id:"pechuga_hierbas",name:"Pechuga Finas Hierbas",price:42000},{id:"pechuga_gratinada",name:"Pechuga Gratinada",price:48000},{id:"pollo_saltado",name:"Pollo Saltado",price:52000}]},
   {cat:"Vegetarianos & Veganos",items:[{id:"risotto_champinones",name:"Risotto Cremoso de Champiñones",price:55000},{id:"arroz_ajonjoli",name:"Arroz de Ajonjolí con Tortilla",price:57000},{id:"boronia_costena",name:"Boronia Costeña",price:45000},{id:"pastas_veganas",name:"Pastas Veganas",price:45000}]},
   {cat:"Adicionales",items:[{id:"salsa_camaron",name:"Salsa de Camarón",price:25000},{id:"salsa_frutos_mar",name:"Salsa Frutos del Mar",price:28000},{id:"porcion_arroz_coco",name:"Porción Arroz con Coco",price:12000},{id:"porcion_patacon",name:"Porción de Patacón",price:8000},{id:"porcion_papas",name:"Porción de Papas a la Francesa",price:14000}]},
   {cat:"Postres",items:[{id:"flan_napolitano",name:"Flan Napolitano",price:22000},{id:"colita_raton",name:"Colita de Ratón con Helado",price:25000},{id:"panacota_maracuya",name:"Panacota de Maracuyá",price:22000},{id:"panacota_frutos_rojos",name:"Panacota Frutos Rojos",price:22000}]},
-  {cat:"Bebidas & Cócteles",items:[{id:"limonada_coco",name:"Limonada de Coco",price:15000},{id:"limonada_hierbabuena",name:"Limonada Hierbabuena",price:12000},{id:"limonada_natural",name:"Limonada Natural",price:10000},{id:"limonada_maracumango",name:"Limonada Maracumango",price:15000},{id:"copa_vino",name:"Copa de Vino",price:30000},{id:"margarita_tradicional",name:"Margarita Tradicional",price:32000},{id:"mojito",name:"Mojito",price:25000},{id:"caipirinha",name:"Caipirinha",price:28000},{id:"jarra_sangria",name:"Jarra de Sangría",price:75000},{id:"cuba_libre",name:"Cuba Libre",price:22000},{id:"aguila",name:"Águila Light / Original",price:6000},{id:"corona",name:"Corona",price:12000},{id:"club_colombia",name:"Club Colombia Lata",price:8000},{id:"agua_manantial",name:"Agua Manantial",price:10000},{id:"coca_cola",name:"Coca Cola",price:8000}]}
+  {cat:"Bebidas & Cócteles",items:[{id:"limonada_coco",name:"Limonada de Coco",price:15000},{id:"limonada_hierbabuena",name:"Limonada Hierbabuena",price:12000},{id:"limonada_natural",name:"Limonada Natural",price:10000},{id:"limonada_maracumango",name:"Limonada Maracumango",price:15000},{id:"copa_vino",name:"Copa de Vino",price:30000},{id:"margarita_tradicional",name:"Margarita Tradicional",price:32000},{id:"mojito",name:"Mojito",price:25000},{id:"caipirinha",name:"Caipirinha",price:28000},{id:"jarra_sangria",name:"Jarra de Sangría",price:75000},{id:"cuba_libre",name:"Cuba Libre",price:22000},{id:"aguila",name:"Águila Light / Original",price:7000},{id:"corona",name:"Corona",price:12000},{id:"corona",name:"Coronita",price:8000},{id:"club_colombia",name:"Club Colombia Lata",price:8000},{id:"agua",name:"Agua",price:6000},{id:"stella",name:"stella",price:12000},{id:"modelo",name:"modelo",price:15000},{id:"agua_manantial",name:"Agua Manantial",price:10000},{id:"coca_cola",name:"Coca Cola",price:8000}]}
 ];
 
-const PREP_MIN=60, NUM_MESAS=18;
+const PREP_MIN=60, NUM_MESAS=30;
 let selectedTable=null, cart={}, currentView="launcher";
 let ordersCache=[], inventory={}, fbOrderListener=null, fbInvListener=null;
 let adminTab="cuentas", detalleMesa=null, editingOrderId=null, scheduledTime=null, incluyePropina=true;
@@ -579,7 +579,7 @@ function buildComandaHTML(order){
     </div>
     ${order.scheduledTime?`<div class="cmd-prog">🕐 Para las ${order.scheduledTime}</div>`:""}
     ${(order.items||[]).map(it=>`<div class="cmd-item"><b>${it.qty}×</b> ${it.name}</div>${it.note?`<div class="cmd-note">↳ ${it.note}</div>`:""}`).join("")}
-    <div class="cmd-footer">Mar y Sazón · ${new Date().toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"})}</div>
+    <div class="cmd-footer">La mar sabor peruano · ${new Date().toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"})}</div>
   </div>`;
 }
 
@@ -803,7 +803,7 @@ function renderDetalleMesa(mesa){
   // Factura
   h+='<div class="factura-print-area" id="fac-print">';
   h+='<div class="factura-wrap">';
-  h+=`<div class="factura-header"><div class="factura-logo">🐚 Mar y Sazón</div><div class="factura-sub" style="color:#000;font-weight:600;">Restaurante de Mar · Sabores del Caribe y el Pacífico</div></div>`;
+  h+=`<div class="factura-header"><div class="factura-logo">🐚 La mar sabor peruano</div><div class="factura-sub" style="color:#000;font-weight:600;">calle 7A No 15B-22 · NIT 22.510.390 -6 . reslamarsaborperuano@gmail.com</div></div>`;
   h+=`<div class="factura-meta" style="color:#000;font-weight:700;"><span>Mesa ${mesa}</span><span>${ahora}</span></div>`;
   h+='<table class="fac-table"><thead><tr><th>Ítem</th><th>Cant.</th><th>P. Unit.</th><th>Total</th></tr></thead><tbody>';
   const renderItemRow=(it)=>{
@@ -839,7 +839,7 @@ function renderDetalleMesa(mesa){
   }
   h+=`<div class="fac-row total" style="color:#000;font-weight:900;"><span>TOTAL</span><span>${fmtCOP(total)}</span></div>`;
   h+='</div>';
-  h+='<div class="fac-footer" style="color:#000;"><strong style="color:#000;font-weight:800;">¡Gracias por visitarnos!</strong><span style="color:#000;font-weight:600;">Esperamos verte pronto · Mar y Sazón</span></div>';
+  h+='<div class="fac-footer" style="color:#000;"><strong style="color:#000;font-weight:800;">¡Gracias por visitarnos!</strong><span style="color:#000;font-weight:600;">Esperamos verte pronto · La mar sabor peruano</span></div>';
   h+='</div></div>'; // factura-wrap, factura-print-area
 
   h+=`<div class="print-actions">
