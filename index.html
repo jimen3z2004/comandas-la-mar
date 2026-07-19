@@ -150,7 +150,7 @@ td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;}tr:last
 .propina-toggle{display:flex;align-items:center;gap:10px;background:#fdf3da;border:1.5px solid var(--gold);border-radius:10px;padding:11px 14px;margin-bottom:10px;cursor:pointer;}
 .propina-toggle input{width:18px;height:18px;accent-color:var(--gold);cursor:pointer;}
 .propina-toggle label{font-size:14px;font-weight:700;color:#8a6a1a;cursor:pointer;}
-.factura-wrap{background:white;border-radius:12px;border:1px solid var(--line);padding:22px;max-width:420px;margin:0 auto;}
+.factura-wrap{background:white;border-radius:12px;border:1px solid var(--line);padding:22px;max-width:100%;}
 .factura-header{text-align:center;margin-bottom:16px;border-bottom:2px dashed #000;padding-bottom:13px;}
 .factura-logo{font-size:22px;font-weight:800;color:var(--deep);}
 .factura-sub{font-size:12px;color:#000;font-weight:600;margin-top:3px;}
@@ -189,16 +189,8 @@ td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;}tr:last
 .filtro-fecha input{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px;background:white;}
 .filtro-fecha button{background:var(--deep);color:white;padding:8px 16px;border-radius:8px;font-weight:700;font-size:13px;}
 .num-fac-row{font-size:12px;font-weight:700;color:var(--teal);margin-bottom:8px;}
-/* DATOS CLIENTE FACTURA */
-.cliente-box{background:white;border:2px solid var(--teal);border-radius:12px;padding:14px;margin-bottom:12px;max-width:420px;margin-left:auto;margin-right:auto;}
-.cliente-box-title{font-size:12px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px;}
-.cliente-toggle{display:flex;align-items:center;gap:10px;margin-bottom:10px;cursor:pointer;}
-.cliente-toggle input{width:18px;height:18px;accent-color:var(--teal);cursor:pointer;}
-.cliente-toggle label{font-size:14px;font-weight:700;color:var(--teal);cursor:pointer;}
-.cliente-fields{display:flex;flex-direction:column;gap:8px;}
-.cliente-field{display:flex;flex-direction:column;gap:4px;}
-.cliente-field label{font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:0.06em;}
-.cliente-field input{border:1.5px solid var(--line);border-radius:8px;padding:9px 12px;font-size:14px;background:var(--foam);}
+#fac-print{display:none;}
+
 #print-overlay{display:none;}
 @media print{
   @page{margin:5mm;}
@@ -277,7 +269,7 @@ const ALEGRA_TOKEN="f00d8aab5f24c042dcc6";
 const ALEGRA_AUTH="Basic "+btoa(ALEGRA_USER+":"+ALEGRA_TOKEN);
 const ALEGRA_URL="https://api.alegra.com/api/v1/";
 
-async function crearFacturaAlegra(mesa, items, subtotal, propina, total, metodoPago, cliente){
+async function crearFacturaAlegra(mesa, items, subtotal, propina, total, metodoPago){
   // Construir ítems para Alegra
   const itemsAlegra=items.map(it=>({
     id:null,
@@ -306,7 +298,7 @@ async function crearFacturaAlegra(mesa, items, subtotal, propina, total, metodoP
     observations:"Mesa "+mesa+" · Sistema de comandas La mar sabor peruano",
     items:itemsAlegra,
     paymentMethod:paymentMethod,
-    client:cliente||{name:"Consumidor Final",identification:"222222222222"}
+    client:{name:"Consumidor Final",identification:"222222222222"}
   };
 
   try{
@@ -353,7 +345,6 @@ let adminTab="cuentas",detalleMesa=null,editingOrderId=null,scheduledTime=null,i
 let preciosVar={},especialesCart=[],metodoPago="efectivo";
 let prevOrderIds=new Set(),prevListoIds=new Set();
 let filtroDesde="",filtroHasta="";
-let clienteFactura={quiere:false,nombre:"",nit:""};
 let notaMesa=""; // nota general del mesero para la mesa
 
 // ── BEEP ──
@@ -628,7 +619,7 @@ function printAllComanadas(){
   if(active.length===0){showToast("No hay comandas activas");return;}
   doPrint(active.sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt)).map(o=>`<div style="page-break-after:always;">${buildComandaHTML(o)}</div>`).join(""));
 }
-function printFactura(){const area=document.getElementById("fac-print");if(!area)return;doPrint(area.innerHTML);}
+function printFactura(){const area=document.getElementById("fac-print");if(!area)return;doPrint('<div style="max-width:420px;margin:0 auto;">'+area.innerHTML+'</div>');}
 function printCierreCaja(total,efectivo,tarjeta,transferencia,cuentas,mesas){
   const fecha=new Date().toLocaleDateString("es-CO",{weekday:"long",day:"2-digit",month:"long",year:"numeric"});
   const hora=new Date().toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"});
@@ -722,12 +713,12 @@ function renderAdmin(){
     h+=`<label style="font-size:13px;font-weight:600;">Hasta:</label><input type="date" id="f-hasta" value="${hasta}"/>`;
     h+=`<button onclick="aplicarFiltro()">Filtrar</button></div>`;
     h+=`<div style="font-size:14px;font-weight:700;color:var(--teal);margin-bottom:12px;">Total: ${fmtCOP(totFiltro)} · ${filtradas.length} pedidos</div>`;
-    h+='<table><thead><tr><th>Mesa</th><th>Fecha/Hora</th><th>Destino</th><th>Platos</th><th>Total</th><th>Pago</th><th>Fact. Alegra</th><th>Estado</th></tr></thead><tbody>';
+    h+='<table><thead><tr><th>Mesa</th><th>Fecha/Hora</th><th>Destino</th><th>Platos</th><th>Total</th><th>Pago</th><th>Estado</th></tr></thead><tbody>';
     if(filtradas.length===0)h+='<tr><td colspan="7" style="text-align:center;opacity:0.5">Sin pedidos en este período</td></tr>';
     filtradas.forEach(o=>{
       const tot=o.items.reduce((s,it)=>s+(it.price||0)*it.qty,0);
       const fecha=new Date(o.createdAt).toLocaleString("es-CO",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
-      h+=`<tr><td>Mesa ${o.table}</td><td>${fecha}${o.scheduledTime?` <b style="color:var(--gold)">→${o.scheduledTime}</b>`:""}</td><td>${o.type==="barra"?"🍹":"🍳"}</td><td>${o.items.map(it=>it.qty+"× "+it.name).join(", ")}</td><td>${fmtCOP(tot)}</td><td>${o.metodoPago||"—"}</td><td>${o.facturaAlegra?`<span style="color:var(--ok);font-weight:700;">✓ ${o.facturaAlegra}</span>`:"—"}</td><td><span class="chip ${o.status}">${o.status}</span></td></tr>`;
+      h+=`<tr><td>Mesa ${o.table}</td><td>${fecha}${o.scheduledTime?` <b style="color:var(--gold)">→${o.scheduledTime}</b>`:""}</td><td>${o.type==="barra"?"🍹":"🍳"}</td><td>${o.items.map(it=>it.qty+"× "+it.name).join(", ")}</td><td>${fmtCOP(tot)}</td><td>${o.metodoPago||"—"}</td><td><span class="chip ${o.status}">${o.status}</span></td></tr>`;
     });
     h+='</tbody></table>';
   }
@@ -753,12 +744,9 @@ function renderAdmin(){
 
 function aplicarFiltro(){filtroDesde=document.getElementById("f-desde")?document.getElementById("f-desde").value:"";filtroHasta=document.getElementById("f-hasta")?document.getElementById("f-hasta").value:"";renderAdmin();}
 function setAdminTab(t){adminTab=t;detalleMesa=null;renderAdmin();}
-function verDetalle(mesa){detalleMesa=mesa;incluyePropina=true;metodoPago="efectivo";clienteFactura={quiere:false,nombre:"",nit:""};if(!window._preciosTemp)window._preciosTemp={};renderDetalleMesa(mesa);}
+function verDetalle(mesa){detalleMesa=mesa;incluyePropina=true;metodoPago="efectivo";if(!window._preciosTemp)window._preciosTemp={};renderDetalleMesa(mesa);}
 function cerrarDetalle(){detalleMesa=null;window._preciosTemp={};renderAdmin();}
 function togglePropina(){incluyePropina=!incluyePropina;renderDetalleMesa(detalleMesa);}
-function toggleCliente(){clienteFactura.quiere=!clienteFactura.quiere;renderDetalleMesa(detalleMesa);}
-function setClienteNombre(v){clienteFactura.nombre=v;}
-function setClienteNit(v){clienteFactura.nit=v;}
 function setMetodoPago(m){metodoPago=m;renderDetalleMesa(detalleMesa);}
 
 async function renderDetalleMesa(mesa){
@@ -782,25 +770,9 @@ async function renderDetalleMesa(mesa){
   h+=`<div class="propina-toggle" onclick="togglePropina()"><input type="checkbox" ${incluyePropina?"checked":""} onclick="event.stopPropagation();togglePropina()"/><label>Propina voluntaria 10% — ${fmtCOP(Math.round(subtotal*0.1))}</label></div>`;
   h+=`<div class="num-fac-row">Factura N° ${String(numFac).padStart(4,"0")}</div>`;
 
-  // Datos del cliente para factura electrónica
-  h+='<div class="cliente-box">';
-  h+='<div class="cliente-box-title">👤 Datos del cliente</div>';
-  h+=`<div class="cliente-toggle" onclick="toggleCliente()"><input type="checkbox" ${clienteFactura.quiere?"checked":""} onclick="event.stopPropagation();toggleCliente()"/><label>El cliente quiere factura a su nombre</label></div>`;
-  if(clienteFactura.quiere){
-    h+='<div class="cliente-fields">';
-    h+=`<div class="cliente-field"><label>Nombre o razón social</label><input type="text" placeholder="Ej: Juan García o Empresa S.A.S" value="${clienteFactura.nombre}" oninput="setClienteNombre(this.value)"/></div>`;
-    h+=`<div class="cliente-field"><label>NIT o Cédula</label><input type="text" placeholder="Ej: 900123456-1 o 12345678" value="${clienteFactura.nit}" oninput="setClienteNit(this.value)"/></div>`;
-    h+='</div>';
-  } else {
-    h+='<div style="font-size:12px;color:var(--teal);opacity:0.6;">Se enviará como Consumidor Final a la DIAN</div>';
-  }
-  h+='</div>';
   h+='<div id="fac-print"><div class="factura-wrap">';
   h+=`<div class="factura-header"><div class="factura-logo">🐚 La mar sabor peruano</div><div class="factura-sub">calle 7A No 15B-22 · NIT 22.510.390-6 · reslamarsaborperuano@gmail.com</div></div>`;
   h+=`<div class="factura-meta"><span>Mesa ${mesa}</span><span>N° ${String(numFac).padStart(4,"0")}</span><span>${ahora}</span></div>`;
-  if(clienteFactura.quiere&&clienteFactura.nombre){
-    h+=`<div style="background:#e9f0ea;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:13px;font-weight:700;color:#000;"><span>Cliente: ${clienteFactura.nombre}</span>${clienteFactura.nit?` · <span>NIT/CC: ${clienteFactura.nit}</span>`:""}</div>`;
-  }
   h+='<table class="fac-table"><thead><tr><th>Ítem</th><th>Cant.</th><th>P. Unit.</th><th>Total</th></tr></thead><tbody>';
   const renderItemRow=(it)=>{
     const key=it.id+"_"+it.name;
@@ -819,54 +791,49 @@ async function renderDetalleMesa(mesa){
   h+='</div>';
   h+=`<div class="fac-footer"><strong>¡Gracias por visitarnos!</strong><span>Esperamos verte pronto · La mar sabor peruano</span></div>`;
   h+='</div></div>';
+  // Preview visible de la factura en pantalla
+  h+=`<div style="background:white;border-radius:12px;border:1px solid var(--line);padding:18px;max-width:500px;margin:0 auto 14px;">
+    <div style="text-align:center;border-bottom:2px dashed #000;padding-bottom:12px;margin-bottom:12px;">
+      <div style="font-size:20px;font-weight:800;">🐚 La mar sabor peruano</div>
+      <div style="font-size:11px;color:#555;margin-top:3px;">calle 7A No 15B-22 · NIT 22.510.390-6</div>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:12px;flex-wrap:wrap;gap:4px;">
+      <span>Mesa ${mesa}</span><span>N° ${String(numFac).padStart(4,"0")}</span><span>${ahora}</span>
+    </div>
+    <div style="font-size:13px;border-bottom:1px dashed #ccc;padding-bottom:8px;margin-bottom:8px;">`;
+  if(foodItems.length>0){
+    h+=`<div style="font-size:11px;font-weight:800;text-transform:uppercase;color:#555;margin-bottom:6px;">🍽 Cocina</div>`;
+    foodItems.forEach(it=>{
+      if(it.sinPrecio){const key=it.id+"_"+it.name;const pf=window._preciosTemp&&window._preciosTemp[key]?window._preciosTemp[key]:0;h+=`<div style="display:flex;justify-content:space-between;padding:3px 0;"><span>${it.qty}× ${it.name}</span><span>${pf>0?fmtCOP(pf*it.qty):"—"}</span></div>`;}
+      else{h+=`<div style="display:flex;justify-content:space-between;padding:3px 0;"><span>${it.qty}× ${it.name}</span><span>${fmtCOP(it.price*it.qty)}</span></div>`;}
+    });
+  }
+  if(bevItems.length>0){
+    h+=`<div style="font-size:11px;font-weight:800;text-transform:uppercase;color:#555;margin:8px 0 6px;">🍹 Barra</div>`;
+    bevItems.forEach(it=>{
+      if(it.sinPrecio){const key=it.id+"_"+it.name;const pf=window._preciosTemp&&window._preciosTemp[key]?window._preciosTemp[key]:0;h+=`<div style="display:flex;justify-content:space-between;padding:3px 0;"><span>${it.qty}× ${it.name}</span><span>${pf>0?fmtCOP(pf*it.qty):"—"}</span></div>`;}
+      else{h+=`<div style="display:flex;justify-content:space-between;padding:3px 0;"><span>${it.qty}× ${it.name}</span><span>${fmtCOP(it.price*it.qty)}</span></div>`;}
+    });
+  }
+  h+=`</div>
+    <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;padding:3px 0;"><span>Subtotal</span><span>${fmtCOP(subtotal)}</span></div>`;
+  if(incluyePropina)h+=`<div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;padding:3px 0;"><span>Propina voluntaria (10%)</span><span>${fmtCOP(propina)}</span></div>`;
+  h+=`<div style="display:flex;justify-content:space-between;font-size:18px;font-weight:900;border-top:2px solid #000;margin-top:8px;padding-top:8px;"><span>TOTAL</span><span>${fmtCOP(total)}</span></div>
+    <div style="font-size:12px;font-weight:700;margin-top:6px;"><span>Pago: </span><span>${pagoLabel}</span></div>
+  </div>`;
+
   h+=`<div class="print-actions">
-    <button class="btn-print-fac" onclick="cerrarMesaYImprimir(${mesa},'${metodoPago}')">🖨 Cerrar mesa · Factura electrónica Alegra</button>
+    <button class="btn-print-fac" onclick="cerrarMesaYImprimir(${mesa},'${metodoPago}')">🖨 Cerrar mesa e imprimir</button>
     <button class="btn-volver" onclick="cerrarDetalle()">← Volver</button>
   </div>`;
   document.getElementById("admin-body").innerHTML=h;
 }
 
 async function cerrarMesaYImprimir(mesa,pago){
-  // Mostrar loading
-  const btn=document.querySelector(".btn-print-fac");
-  if(btn){btn.textContent="⏳ Generando factura...";btn.disabled=true;}
-
   await getNextFacturaNum();
   const mesaOrds=ordersCache.filter(o=>o.table===mesa&&o.status!=="entregado"&&o.status!=="cancelado");
   const updates={};mesaOrds.forEach(o=>{updates["orders/"+o.id+"/metodoPago"]=pago;});
   await db.ref().update(updates);
-
-  // Recopilar ítems para Alegra
-  if(!window._preciosTemp)window._preciosTemp={};
-  const allItems=[];
-  mesaOrds.forEach(o=>{o.items.forEach(it=>{
-    const price=it.price>0?it.price:(window._preciosTemp[it.id+"_"+it.name]||0);
-    const existing=allItems.find(x=>x.name===it.name);
-    if(existing){existing.qty+=it.qty;}
-    else{allItems.push({name:it.name,price,qty:it.qty});}
-  });});
-
-  const subtotal=allItems.reduce((s,it)=>s+it.price*it.qty,0);
-  const propina=incluyePropina?Math.round(subtotal*0.1):0;
-  const total=subtotal+propina;
-
-  // Enviar a Alegra
-  // Datos cliente
-  const cliente=clienteFactura.quiere&&clienteFactura.nombre
-    ?{name:clienteFactura.nombre,identification:clienteFactura.nit||"222222222222"}
-    :{name:"Consumidor Final",identification:"222222222222"};
-
-  const result=await crearFacturaAlegra(mesa,allItems,subtotal,propina,total,pago,cliente);
-
-  if(result.ok){
-    showToast("✓ Factura electrónica N°"+result.number+" creada en Alegra","#3f7d52");
-    // Guardar número de factura Alegra en Firebase
-    mesaOrds.forEach(o=>{updates["orders/"+o.id+"/facturaAlegra"]=result.number;});
-    await db.ref().update(updates);
-  } else {
-    showToast("⚠ Error en Alegra: "+result.error+". Imprimiendo factura local.","#c8973f");
-  }
-
   printFactura();
 }
 
