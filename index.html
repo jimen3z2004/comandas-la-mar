@@ -351,6 +351,7 @@ let adminTab="cuentas",detalleMesa=null,editingOrderId=null,scheduledTime=null,i
 let preciosVar={},especialesCart=[],metodoPago="efectivo";
 let prevOrderIds=new Set(),prevListoIds=new Set();
 let filtroDesde="",filtroHasta="";
+let espDest="cocina";
 let notaMesa=""; // nota general del mesero para la mesa
 
 // ── BEEP ──
@@ -418,7 +419,6 @@ function addItem(id){const m=getMeta(id);if(!cart[id])cart[id]={qty:0,name:m?m.n
 function decItem(id){if(!cart[id])return;cart[id].qty--;if(cart[id].qty<=0)delete cart[id];renderMesero();}
 function setSchedule(v){scheduledTime=v==="null"?null:v;renderMesero();}
 function setCustomTime(v){scheduledTime=v||null;renderMesero();}
-let espDest="cocina"; // destino del especial: cocina o barra
 function setEspDest(dest){
   espDest=dest;
   const btnC=document.getElementById("esp-dest-cocina");
