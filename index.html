@@ -478,8 +478,8 @@ function renderMesero(){
     h+='<div class="especial-box"><div class="especial-title">✨ Plato especial (no está en el menú)</div>';
     h+='<div class="especial-row"><input class="especial-input" id="esp-inp" type="text" placeholder="Ej: Trucha, Jarra de limonada..."/><input class="especial-cant" id="esp-cant" type="number" min="1" value="1"/><button class="especial-add-btn" onclick="agregarEspecial()">+</button></div>';
     h+='<div style="display:flex;gap:8px;margin-top:8px;">';
-    h+='<button id="esp-dest-cocina" onclick="setEspDest('cocina')" style="flex:1;padding:7px;border-radius:8px;font-weight:700;font-size:13px;border:2px solid var(--deep);background:var(--deep);color:white;">🍳 Cocina</button>';
-    h+='<button id="esp-dest-barra" onclick="setEspDest('barra')" style="flex:1;padding:7px;border-radius:8px;font-weight:700;font-size:13px;border:2px solid var(--line);background:white;color:var(--teal);">🍹 Barra</button>';
+    h+="<button id='esp-dest-cocina' onclick=\"setEspDest(\'cocina\')\" style='flex:1;padding:7px;border-radius:8px;font-weight:700;font-size:13px;border:2px solid var(--deep);background:var(--deep);color:white;'>🍳 Cocina</button>";
+    h+="<button id='esp-dest-barra' onclick=\"setEspDest(\'barra\')\" style='flex:1;padding:7px;border-radius:8px;font-weight:700;font-size:13px;border:2px solid var(--line);background:white;color:var(--teal);'>🍹 Barra</button>";
     h+='</div></div>';
     especialesCart.forEach((e,idx)=>{
       const destIcon=e.dest==="barra"?"🍹 Barra":"🍳 Cocina";
