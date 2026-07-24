@@ -418,20 +418,7 @@ function addItem(id){const m=getMeta(id);if(!cart[id])cart[id]={qty:0,name:m?m.n
 function decItem(id){if(!cart[id])return;cart[id].qty--;if(cart[id].qty<=0)delete cart[id];renderMesero();}
 function setSchedule(v){scheduledTime=v==="null"?null:v;renderMesero();}
 function setCustomTime(v){scheduledTime=v||null;renderMesero();}
-function setEspDest(dest){
-  espDest=dest;
-  const btnC=document.getElementById("esp-dest-cocina");
-  const btnB=document.getElementById("esp-dest-barra");
-  if(btnC&&btnB){
-    if(dest==="cocina"){
-      btnC.style.background="var(--deep)";btnC.style.color="white";btnC.style.borderColor="var(--deep)";
-      btnB.style.background="white";btnB.style.color="var(--teal)";btnB.style.borderColor="var(--line)";
-    } else {
-      btnB.style.background="var(--barra)";btnB.style.color="white";btnB.style.borderColor="var(--barra)";
-      btnC.style.background="white";btnC.style.color="var(--teal)";btnC.style.borderColor="var(--line)";
-    }
-  }
-}
+
 function agregarEspecial(){
   const inp=document.getElementById("esp-inp"),cant=document.getElementById("esp-cant");
   if(!inp||!inp.value.trim())return;
@@ -477,8 +464,10 @@ function renderMesero(){
     h+='<div class="especial-box"><div class="especial-title">✨ Plato especial (no está en el menú)</div>';
     h+='<div class="especial-row"><input class="especial-input" id="esp-inp" type="text" placeholder="Ej: Trucha, Jarra de limonada..."/><input class="especial-cant" id="esp-cant" type="number" min="1" value="1"/><button class="especial-add-btn" onclick="agregarEspecial()">+</button></div>';
     h+='<div style="display:flex;gap:8px;margin-top:8px;">';
-    h+="<button id='esp-dest-cocina' onclick=\"setEspDest(\'cocina\')\" style='flex:1;padding:7px;border-radius:8px;font-weight:700;font-size:13px;border:2px solid var(--deep);background:var(--deep);color:white;'>🍳 Cocina</button>";
-    h+="<button id='esp-dest-barra' onclick=\"setEspDest(\'barra\')\" style='flex:1;padding:7px;border-radius:8px;font-weight:700;font-size:13px;border:2px solid var(--line);background:white;color:var(--teal);'>🍹 Barra</button>";
+    const estiloC=espDest==="cocina"?"background:var(--deep);color:white;border:2px solid var(--deep);":"background:white;color:var(--teal);border:2px solid var(--line);";
+    const estiloB=espDest==="barra"?"background:var(--barra);color:white;border:2px solid var(--barra);":"background:white;color:var(--teal);border:2px solid var(--line);";
+    h+='<button onclick="espDest=\'cocina\';renderMesero();" style="flex:1;padding:7px;border-radius:8px;font-weight:700;font-size:13px;'+estiloC+'">🍳 Cocina</button>';
+    h+='<button onclick="espDest=\'barra\';renderMesero();" style="flex:1;padding:7px;border-radius:8px;font-weight:700;font-size:13px;'+estiloB+'">🍹 Barra</button>';
     h+='</div></div>';
     especialesCart.forEach((e,idx)=>{
       const destIcon=e.dest==="barra"?"🍹 Barra":"🍳 Cocina";
@@ -810,7 +799,7 @@ function renderAdmin(){
     });
     h+='</tbody></table>';
   }
-  else if(adminTab==="inventario"){  else if(adminTab==="inventario"){
+  else if(adminTab==="inventario"){
     h+='<div class="inv-wrap"><p style="font-size:13px;color:var(--teal);opacity:0.7;margin-bottom:14px;">Vacío = ilimitado.</p><form onsubmit="saveInventory(event)">';
     MENU.forEach(group=>{
       h+=`<div class="inv-cat-title">${group.cat}</div>`;
