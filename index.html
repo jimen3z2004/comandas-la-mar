@@ -155,11 +155,15 @@ td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;}tr:last
 .factura-logo{font-size:22px;font-weight:800;color:var(--deep);}
 .factura-sub{font-size:12px;color:#000;font-weight:600;margin-top:3px;}
 .factura-meta{font-size:12px;color:#000;font-weight:700;margin-bottom:14px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px;}
-.fac-table{width:100%;border-collapse:collapse;margin-bottom:13px;}
-.fac-table th{font-size:11px;text-transform:uppercase;color:#000;font-weight:800;padding:5px 4px;border-bottom:2px solid #000;text-align:left;}
+.fac-table{width:100%;border-collapse:collapse;margin-bottom:13px;table-layout:fixed;}
+.fac-table th{font-size:10px;text-transform:uppercase;color:#000;font-weight:800;padding:4px 2px;border-bottom:2px solid #000;text-align:left;word-break:break-word;}
 .fac-table th:last-child,.fac-table td:last-child{text-align:right;}
-.fac-table td{padding:6px 4px;font-size:13px;border-bottom:1px solid #eee;}
-.fac-cat-row td{font-size:11px;font-weight:800;color:#000;padding-top:11px;text-transform:uppercase;border-bottom:none;}
+.fac-table th:first-child,.fac-table td:first-child{width:45%;}
+.fac-table th:nth-child(2),.fac-table td:nth-child(2){width:10%;text-align:center;}
+.fac-table th:nth-child(3),.fac-table td:nth-child(3){width:22%;text-align:right;}
+.fac-table th:nth-child(4),.fac-table td:nth-child(4){width:23%;text-align:right;}
+.fac-table td{padding:5px 2px;font-size:12px;border-bottom:1px solid #eee;word-break:break-word;}
+.fac-cat-row td{font-size:10px;font-weight:800;color:#000;padding-top:10px;text-transform:uppercase;border-bottom:none;}
 .fac-totales{border-top:2px dashed #000;padding-top:9px;}
 .fac-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;color:#000;font-weight:700;}
 .fac-row.prop-note{font-size:11px;font-style:italic;font-weight:500;}
@@ -191,12 +195,13 @@ td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;}tr:last
 .num-fac-row{font-size:12px;font-weight:700;color:var(--teal);margin-bottom:8px;}
 #fac-print{display:none;}
 
-#print-overlay{display:none;}
+#print-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:white;z-index:9999;padding:16px;overflow-y:auto;}
 @media print{
   @page{margin:5mm;}
-  body>*{display:none!important;}
-  #print-overlay{display:block!important;position:fixed;top:0;left:0;width:100%;padding:10px;background:white;}
-  #print-overlay *{color:#000!important;font-weight:700!important;background:white!important;opacity:1!important;}
+  body>*:not(#print-overlay){display:none!important;}
+  #print-overlay{display:block!important;position:static!important;padding:0!important;width:100%!important;height:auto!important;}
+  #print-overlay .no-print-btns{display:none!important;visibility:hidden!important;}
+  #print-overlay *{color:#000!important;font-weight:700!important;background:white!important;opacity:1!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
 }
 /* NOTA DE MESA */
 .nota-mesa-box{background:white;border:2px solid var(--teal);border-radius:12px;margin:0 16px 12px;padding:13px;}
@@ -325,7 +330,7 @@ async function crearFacturaAlegra(mesa, items, subtotal, propina, total, metodoP
 const BEV_CAT="Bebidas & Cócteles";
 const MENU=[
   {cat:"Para Comenzar",items:[{id:"tiradito",name:"Tiradito de Pescado",price:41000},{id:"cev_carretillero",name:"Ceviche Carretillero",price:48000},{id:"cev_mixto",name:"Ceviche Mixto",price:58000},{id:"coctel_camaron",name:"Coctel de Camarón",price:32000},{id:"cev_limeno",name:"Ceviche Limeño",price:75000},{id:"anillos_calamar",name:"Anillos de Calamar",price:45000},{id:"pulpo_vinagreta",name:"Pulpo a la Vinagreta",price:48000}]},
-  {cat:"Para Compartir",items:[{id:"huevas_pescado",name:"Huevas de Pescado",price:65000},{id:"bocaditos_bacalao",name:"Bocaditos de Bacalao",price:48000},{id:"canastillas_camaron",name:"Canastillas de Camarón a la Huancaína",price:55000},{id:"langostinos_dinamita",name:"Langostinos Dinamita",price:65000},{id:"mariscada_parrilla",name:"Mariscada a la Parrilla",price:180000}]},
+  {cat:"Para Compartir",items:[{id:"huevas_pescado",name:"Huevas de Pescado",price:55900},{id:"bocaditos_bacalao",name:"Bocaditos de Bacalao",price:48000},{id:"canastillas_camaron",name:"Canastillas de Camarón a la Huancaína",price:55000},{id:"langostinos_dinamita",name:"Langostinos Dinamita",price:65000},{id:"mariscada_parrilla",name:"Mariscada a la Parrilla",price:180000}]},
   {cat:"Sopas & Cremas",items:[{id:"sopa_levantamuertos",name:"Sopa Levantamuertos",price:30000},{id:"cazuela_mar_leva",name:"Cazuela Mar de Leva",price:60000},{id:"chupe_camaron",name:"Chupe de Camarón",price:55000},{id:"sopa_casa",name:"Sopa de la Casa",price:15000}]},
   {cat:"Fritos del Mar",items:[{id:"mojarra",name:"Mojarra Roja / Negra",price:42000},{id:"robalo_posta",name:"Robalo Posta",price:57000},{id:"posta_sierra",name:"Posta de Sierra",price:55000},{id:"pargo_rojo",name:"Pargo Rojo",price:null},{id:"lebranche",name:"Lebranche",price:null},{id:"sabalo",name:"Sábalo",price:null},{id:"mero",name:"Mero",price:null}]},
   {cat:"Especiales del Mar",items:[{id:"salmon_finas_hierbas",name:"Salmón a las Finas Hierbas",price:65000},{id:"salmon_pina_naranja",name:"Salmón en Piña Naranja",price:68000},{id:"salmon_toscana",name:"Salmón en Salsa Toscana",price:69000},{id:"salmon_huancaina",name:"Salmón a la Huancaína con Camarones",price:75000},{id:"robalo_ajillo",name:"Robalo al Ajillo",price:65000},{id:"robalo_encocado",name:"Robalo Encocado",price:58000},{id:"filete_mar",name:"Filete de Pescado a la Mar",price:68000},{id:"robalo_limon",name:"Robalo al Limón",price:60000},{id:"robalo_al_horno",name:"Robalo al Horno",price:75000},{id:"sierra_encocada",name:"Sierra Encocada",price:55000},{id:"escabeche",name:"Escabeche (Sierra o Barracuda)",price:65000},{id:"langostinos_encocados",name:"Langostinos Encocados",price:60000},{id:"camarones_ajillo",name:"Camarones al Ajillo",price:58000},{id:"langosta",name:"Langosta",price:null},{id:"pulpo_grill",name:"Pulpo al Grill",price:60000},{id:"pulpo_ajillo",name:"Pulpo al Ajillo",price:65000}]},
@@ -338,6 +343,7 @@ const MENU=[
   {cat:"Postres",items:[{id:"flan_napolitano",name:"Flan Napolitano",price:22000},{id:"colita_raton",name:"Colita de Ratón con Helado",price:25000},{id:"panacota_maracuya",name:"Panacota de Maracuyá",price:22000},{id:"panacota_frutos_rojos",name:"Panacota Frutos Rojos",price:22000}]},
   {cat:"Bebidas & Cócteles",items:[{id:"limonada_coco",name:"Limonada de Coco",price:15000},{id:"limonada_hierbabuena",name:"Limonada Hierbabuena",price:12000},{id:"jarra_de_limonada_cerezada",name:"jarra de liomonada cerezada",price:40000},{id:"limonada_natural",name:"Limonada Natural",price:10000},{id:"limonada_maracumango",name:"Limonada Maracumango",price:15000},{id:"copa_vino",name:"Copa de Vino",price:30000},{id:"margarita_tradicional",name:"Margarita Tradicional",price:32000},{id:"mojito",name:"Mojito",price:25000},{id:"caipirinha",name:"Caipirinha",price:28000},{id:"jarra_sangria",name:"Jarra de Sangría",price:75000},{id:"cuba_libre",name:"Cuba Libre",price:22000},{id:"aguila",name:"Águila Light / Original",price:7000},{id:"corona",name:"Corona",price:12000},{id:"coronita",name:"Coronita",price:8000},{id:"club_colombia",name:"Club Colombia Lata",price:8000},{id:"agua_manantial",name:"Agua manantial",price:10000},{id:"quatro",name:"quatro",price:8000},{id:"kola_roman",name:"kola roman",price:8000},{id:"ginger",name:"ginger",price:8000},{id:"smirnoft",name:"smirnoft",price:8000},{id:"hatsu",name:"hatsu",price:8000},{id:"stella",name:"Stella",price:12000},{id:"bretaña",name:"bretaña",price:8000},{id:"modelo",name:"Modelo",price:15000},{id:"gueitore",name:"gueitore",price:8000},{id:"coca_cola_zero",name:"Coca Cola zero",price:8000},{id:"agua_manantial_con_gas",name:"Agua Manantial con agas",price:10000},{id:"coca_cola",name:"Coca Cola",price:8000}]}
 ];
+
 const PREP_MIN=60,NUM_MESAS=30;
 let selectedTable=null,cart={},currentView="launcher";
 let ordersCache=[],inventory={},fbOrderListener=null,fbInvListener=null;
@@ -412,7 +418,28 @@ function addItem(id){const m=getMeta(id);if(!cart[id])cart[id]={qty:0,name:m?m.n
 function decItem(id){if(!cart[id])return;cart[id].qty--;if(cart[id].qty<=0)delete cart[id];renderMesero();}
 function setSchedule(v){scheduledTime=v==="null"?null:v;renderMesero();}
 function setCustomTime(v){scheduledTime=v||null;renderMesero();}
-function agregarEspecial(){const inp=document.getElementById("esp-inp"),cant=document.getElementById("esp-cant");if(!inp||!inp.value.trim())return;especialesCart.push({nombre:inp.value.trim(),qty:parseInt(cant.value)||1});renderMesero();}
+let espDest="cocina"; // destino del especial: cocina o barra
+function setEspDest(dest){
+  espDest=dest;
+  const btnC=document.getElementById("esp-dest-cocina");
+  const btnB=document.getElementById("esp-dest-barra");
+  if(btnC&&btnB){
+    if(dest==="cocina"){
+      btnC.style.background="var(--deep)";btnC.style.color="white";btnC.style.borderColor="var(--deep)";
+      btnB.style.background="white";btnB.style.color="var(--teal)";btnB.style.borderColor="var(--line)";
+    } else {
+      btnB.style.background="var(--barra)";btnB.style.color="white";btnB.style.borderColor="var(--barra)";
+      btnC.style.background="white";btnC.style.color="var(--teal)";btnC.style.borderColor="var(--line)";
+    }
+  }
+}
+function agregarEspecial(){
+  const inp=document.getElementById("esp-inp"),cant=document.getElementById("esp-cant");
+  if(!inp||!inp.value.trim())return;
+  especialesCart.push({nombre:inp.value.trim(),qty:parseInt(cant.value)||1,dest:espDest});
+  espDest="cocina";
+  renderMesero();
+}
 function quitarEspecial(idx){especialesCart.splice(idx,1);renderMesero();}
 
 function renderMesero(){
@@ -448,8 +475,16 @@ function renderMesero(){
         h+='</div><div class="sec-label">Agregar más</div>';
       }
     } else {h+='<div class="sec-label">Menú</div>';}
-    h+='<div class="especial-box"><div class="especial-title">✨ Plato especial (no está en el menú)</div><div class="especial-row"><input class="especial-input" id="esp-inp" type="text" placeholder="Ej: Trucha, Arroz con pato..."/><input class="especial-cant" id="esp-cant" type="number" min="1" value="1"/><button class="especial-add-btn" onclick="agregarEspecial()">+</button></div></div>';
-    especialesCart.forEach((e,idx)=>{h+=`<div class="especial-item"><div><div class="especial-item-name">${e.qty}× ${e.nombre}</div><div class="especial-item-sub">Precio lo pone el admin al facturar</div></div><button onclick="quitarEspecial(${idx})" style="color:var(--coral-dark);font-size:18px;font-weight:700;">✕</button></div>`;});
+    h+='<div class="especial-box"><div class="especial-title">✨ Plato especial (no está en el menú)</div>';
+    h+='<div class="especial-row"><input class="especial-input" id="esp-inp" type="text" placeholder="Ej: Trucha, Jarra de limonada..."/><input class="especial-cant" id="esp-cant" type="number" min="1" value="1"/><button class="especial-add-btn" onclick="agregarEspecial()">+</button></div>';
+    h+='<div style="display:flex;gap:8px;margin-top:8px;">';
+    h+='<button id="esp-dest-cocina" onclick="setEspDest('cocina')" style="flex:1;padding:7px;border-radius:8px;font-weight:700;font-size:13px;border:2px solid var(--deep);background:var(--deep);color:white;">🍳 Cocina</button>';
+    h+='<button id="esp-dest-barra" onclick="setEspDest('barra')" style="flex:1;padding:7px;border-radius:8px;font-weight:700;font-size:13px;border:2px solid var(--line);background:white;color:var(--teal);">🍹 Barra</button>';
+    h+='</div></div>';
+    especialesCart.forEach((e,idx)=>{
+      const destIcon=e.dest==="barra"?"🍹 Barra":"🍳 Cocina";
+      h+=`<div class="especial-item"><div><div class="especial-item-name">${e.qty}× ${e.nombre} <span style="font-size:11px;font-weight:600;opacity:0.8;">${destIcon}</span></div><div class="especial-item-sub">Precio lo pone el admin al facturar</div></div><button onclick="quitarEspecial(${idx})" style="color:var(--coral-dark);font-size:18px;font-weight:700;">✕</button></div>`;
+    });
     MENU.forEach(group=>{
       const bev=group.cat===BEV_CAT;
       h+=`<div class="cat-title${bev?" bev":""}">${bev?"🍹 ":""}${group.cat}</div>`;
@@ -527,7 +562,7 @@ function sendOrder(){
   const entries=Object.entries(cart);
   if(!selectedTable||(entries.length===0&&especialesCart.length===0))return;
   const allItems=entries.map(([id,c])=>{const m=getMeta(id);return{id,name:m?m.name:c.name,price:c.price||0,qty:c.qty,note:c.note||"",bev:isBev(id)};});
-  especialesCart.forEach(e=>{allItems.push({id:"esp_"+Date.now()+"_"+Math.random().toString(36).slice(2,5),name:e.nombre,price:null,qty:e.qty,note:"",bev:false,especial:true});});
+  especialesCart.forEach(e=>{allItems.push({id:"esp_"+Date.now()+"_"+Math.random().toString(36).slice(2,5),name:e.nombre,price:null,qty:e.qty,note:"",bev:e.dest==="barra",especial:true});});
   const base={table:selectedTable,createdAt:new Date().toISOString(),status:"pendiente",scheduledTime:scheduledTime||null,notaMesa:notaMesa||null};
   const food=allItems.filter(it=>!it.bev),bev=allItems.filter(it=>it.bev);
   const ps=[];
@@ -542,9 +577,17 @@ function saveEdit(){
   if(!editingOrderId)return;
   const entries=Object.entries(cart);if(entries.length===0)return;
   const items=entries.map(([id,c])=>{const m=getMeta(id);return{id,name:m?m.name:c.name,price:c.price||0,qty:c.qty,note:c.note||"",bev:isBev(id)};});
-  const ps=[db.ref("orders/"+editingOrderId+"/items").set(items)];
-  if(scheduledTime!==undefined)ps.push(db.ref("orders/"+editingOrderId+"/scheduledTime").set(scheduledTime||null));
-  Promise.all(ps).then(()=>{showToast("✓ Pedido actualizado");cart={};editingOrderId=null;scheduledTime=null;renderMesero();});
+  // Actualizar todo el pedido de una sola vez
+  const update={
+    items:items,
+    scheduledTime:scheduledTime||null,
+    updatedAt:new Date().toISOString()
+  };
+  db.ref("orders/"+editingOrderId).update(update).then(()=>{
+    showToast("✓ Pedido actualizado");
+    cart={};editingOrderId=null;scheduledTime=null;especialesCart=[];
+    renderMesero();
+  }).catch(e=>{showToast("Error al actualizar: "+e.message,"#b3402f");});
 }
 
 // ══ KDS ══
@@ -609,7 +652,7 @@ function buildComandaHTML(order){
 
 function doPrint(html){
   const ov=document.getElementById("print-overlay");
-  ov.innerHTML=`<div style="margin-bottom:12px;"><button onclick="window.print()" style="background:#0b2b2e;color:white;padding:9px 18px;border-radius:8px;font-weight:700;font-size:14px;border:none;cursor:pointer;margin-right:8px;">🖨 Imprimir</button><button onclick="closePrint()" style="background:#eee;color:#333;padding:9px 18px;border-radius:8px;font-weight:700;font-size:14px;border:none;cursor:pointer;">✕ Cerrar</button></div>${html}`;
+  ov.innerHTML=`<div class="no-print-btns" style="margin-bottom:12px;"><button onclick="window.print()" style="background:#0b2b2e;color:white;padding:9px 18px;border-radius:8px;font-weight:700;font-size:14px;border:none;cursor:pointer;margin-right:8px;">🖨 Imprimir</button><button onclick="closePrint()" style="background:#eee;color:#333;padding:9px 18px;border-radius:8px;font-weight:700;font-size:14px;border:none;cursor:pointer;">✕ Cerrar</button></div>${html}`;
   ov.style.display="block";
 }
 function closePrint(){const ov=document.getElementById("print-overlay");ov.style.display="none";ov.innerHTML="";}
@@ -651,6 +694,7 @@ function renderAdmin(){
     <button class="tab-btn${adminTab==="caja"?" active":""}" onclick="setAdminTab('caja')">💰 Cierre de Caja</button>
     <button class="tab-btn${adminTab==="resumen"?" active":""}" onclick="setAdminTab('resumen')">Resumen</button>
     <button class="tab-btn${adminTab==="historial"?" active":""}" onclick="setAdminTab('historial')">Historial</button>
+    <button class="tab-btn${adminTab==="propinas"?" active":""}" onclick="setAdminTab('propinas')">💰 Propinas</button>
     <button class="tab-btn${adminTab==="precios"?" active":""}" onclick="setAdminTab('precios')">💲 Precios</button>
     <button class="tab-btn${adminTab==="inventario"?" active":""}" onclick="setAdminTab('inventario')">📦 Inventario</button>
     <button class="reset-btn" onclick="resetOrders()">🗑 Borrar todo</button>
@@ -729,7 +773,45 @@ function renderAdmin(){
     sinPrecio.forEach(item=>{const cur=preciosVar[item.id],val=cur!=null?cur:"";const estado=val===""?'<span style="color:var(--late);font-weight:700;">Sin precio</span>':`<span style="color:var(--ok);font-weight:700;">${fmtCOP(val)}</span>`;h+=`<tr><td>${item.name}</td><td><input type="number" min="0" max="9999999" name="${item.id}" value="${val}" placeholder="Ej: 55000"/></td><td>${estado}</td></tr>`;});
     h+='</tbody></table><button type="submit" class="inv-save-btn" style="background:var(--gold);">💾 Guardar precios</button></form>';
   }
-  else if(adminTab==="inventario"){
+  else if(adminTab==="propinas"){
+    const hoy=todayStr();
+    const desde=filtroDesde||hoy,hasta=filtroHasta||hoy;
+    const conPropina=ordersCache.filter(o=>{
+      const d=o.createdAt?o.createdAt.slice(0,10):"";
+      return d>=desde&&d<=hasta&&o.propinaCobrada&&o.propinaCobrada>0&&o.status==="entregado";
+    });
+    // Agrupar por mesa (una propina por mesa, no por pedido)
+    const mesasPropina={};
+    conPropina.forEach(o=>{
+      if(!mesasPropina[o.table+"_"+o.createdAt.slice(0,10)]){
+        mesasPropina[o.table+"_"+o.createdAt.slice(0,10)]={
+          mesa:o.table,
+          fecha:new Date(o.createdAt).toLocaleString("es-CO",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}),
+          propina:o.propinaCobrada,
+          subtotal:o.subtotalCobrado||0,
+          pago:o.metodoPago||"—"
+        };
+      }
+    });
+    const listaPropinas=Object.values(mesasPropina).sort((a,b)=>b.fecha.localeCompare(a.fecha));
+    const totalPropinas=listaPropinas.reduce((s,p)=>s+p.propina,0);
+    h+='<div class="filtro-fecha">';
+    h+=`<label style="font-size:13px;font-weight:600;">Desde:</label><input type="date" id="f-desde" value="${desde}"/>`;
+    h+=`<label style="font-size:13px;font-weight:600;">Hasta:</label><input type="date" id="f-hasta" value="${hasta}"/>`;
+    h+=`<button onclick="aplicarFiltro()">Filtrar</button></div>`;
+    h+=`<div class="a-grid" style="grid-template-columns:repeat(3,1fr);">
+      <div class="a-card" style="border-color:var(--gold)"><div class="a-num" style="color:var(--gold)">${fmtCOP(totalPropinas)}</div><div class="a-lbl">Total propinas</div></div>
+      <div class="a-card"><div class="a-num">${listaPropinas.length}</div><div class="a-lbl">Cuentas con propina</div></div>
+      <div class="a-card"><div class="a-num">${listaPropinas.length>0?fmtCOP(Math.round(totalPropinas/listaPropinas.length)):"$0"}</div><div class="a-lbl">Promedio por mesa</div></div>
+    </div>`;
+    h+='<table><thead><tr><th>Mesa</th><th>Fecha</th><th>Subtotal</th><th>Propina (10%)</th><th>Pago</th></tr></thead><tbody>';
+    if(listaPropinas.length===0)h+='<tr><td colspan="5" style="text-align:center;opacity:0.5">No hay propinas en este período</td></tr>';
+    listaPropinas.forEach(p=>{
+      h+=`<tr><td>Mesa ${p.mesa}</td><td>${p.fecha}</td><td>${fmtCOP(p.subtotal)}</td><td style="color:var(--gold);font-weight:700;">${fmtCOP(p.propina)}</td><td>${p.pago}</td></tr>`;
+    });
+    h+='</tbody></table>';
+  }
+  else if(adminTab==="inventario"){  else if(adminTab==="inventario"){
     h+='<div class="inv-wrap"><p style="font-size:13px;color:var(--teal);opacity:0.7;margin-bottom:14px;">Vacío = ilimitado.</p><form onsubmit="saveInventory(event)">';
     MENU.forEach(group=>{
       h+=`<div class="inv-cat-title">${group.cat}</div>`;
@@ -832,7 +914,19 @@ async function renderDetalleMesa(mesa){
 async function cerrarMesaYImprimir(mesa,pago){
   await getNextFacturaNum();
   const mesaOrds=ordersCache.filter(o=>o.table===mesa&&o.status!=="entregado"&&o.status!=="cancelado");
-  const updates={};mesaOrds.forEach(o=>{updates["orders/"+o.id+"/metodoPago"]=pago;});
+  // Calcular subtotal y propina para guardar
+  if(!window._preciosTemp)window._preciosTemp={};
+  const subtotalMesa=mesaOrds.reduce((s,o)=>s+o.items.reduce((ss,it)=>{
+    const p=it.price>0?it.price:(window._preciosTemp[it.id+"_"+it.name]||0);
+    return ss+p*it.qty;
+  },0),0);
+  const propinaMesa=incluyePropina?Math.round(subtotalMesa*0.1):0;
+  const updates={};
+  mesaOrds.forEach(o=>{
+    updates["orders/"+o.id+"/metodoPago"]=pago;
+    updates["orders/"+o.id+"/propinaCobrada"]=propinaMesa;
+    updates["orders/"+o.id+"/subtotalCobrado"]=subtotalMesa;
+  });
   await db.ref().update(updates);
   printFactura();
 }
