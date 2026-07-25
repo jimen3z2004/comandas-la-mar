@@ -377,7 +377,7 @@ function startListeners(onOrders){
   if(fbInvListener)db.ref("inventory").off("value",fbInvListener);
   fbOrderListener=db.ref("orders").on("value",snap=>{
     const d=snap.val()||{};
-    const newCache=Object.values(d).filter(o=>o&&o.items&&Array.isArray(o.items)).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+    const newCache=Object.values(d).filter(o=>o&&o.id).map(o=>({...o,items:Array.isArray(o.items)?o.items:[]})).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
     if(currentView==="cocina"||currentView==="barra"){
       newCache.forEach(o=>{if(!prevOrderIds.has(o.id)&&o.status==="pendiente")playBeep();});
     }
@@ -846,8 +846,13 @@ async function renderDetalleMesa(mesa){
   h+='<table class="fac-table"><thead><tr><th>Ítem</th><th>Cant.</th><th>P. Unit.</th><th>Total</th></tr></thead><tbody>';
   const renderItemRow=(it)=>{
     const key=it.id+"_"+it.name;
-    const pf=it.sinPrecio?(window._preciosTemp[key]||0):it.price;
-    if(it.sinPrecio){return `<tr><td>${it.name} <span style="font-size:10px;background:#fdf3da;color:#8a6a1a;padding:1px 6px;border-radius:8px;font-weight:700;">según peso</span></td><td style="text-align:center">${it.qty}</td><td><input type="number" min="0" placeholder="$ precio" value="${window._preciosTemp[key]||""}" style="border:2px solid var(--gold);border-radius:6px;padding:4px 7px;font-size:13px;width:100px;" oninput="setPrecioTemp('${key}',this.value)"/></td><td style="font-weight:700;">${pf>0?fmtCOP(pf*it.qty):"—"}</td></tr>`;}
+    // Mostrar campo editable si: precio es null, 0, o es un especial
+    const needsPrice=it.sinPrecio||it.especial||(it.price===null)||(it.price===0&&it.id&&it.id.startsWith("esp_"));
+    const pf=needsPrice?(window._preciosTemp[key]||0):it.price;
+    if(needsPrice){
+      const label=it.especial?'especial':'según peso';
+      return `<tr><td>${it.name} <span style="font-size:10px;background:#fdf3da;color:#8a6a1a;padding:1px 6px;border-radius:8px;font-weight:700;">${label}</span></td><td style="text-align:center">${it.qty}</td><td><input type="number" min="0" placeholder="$ precio" value="${window._preciosTemp[key]||""}" style="border:2px solid var(--gold);border-radius:6px;padding:4px 7px;font-size:13px;width:100px;" oninput="setPrecioTemp('${key}',this.value)"/></td><td style="font-weight:700;">${pf>0?fmtCOP(pf*it.qty):"—"}</td></tr>`;
+    }
     return `<tr><td>${it.name}</td><td style="text-align:center">${it.qty}</td><td>${fmtCOP(it.price)}</td><td>${fmtCOP(it.price*it.qty)}</td></tr>`;
   };
   if(foodItems.length>0){h+='<tr class="fac-cat-row"><td colspan="4">🍽 Cocina</td></tr>';foodItems.forEach(it=>{h+=renderItemRow(it);});}
