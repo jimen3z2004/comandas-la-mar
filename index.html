@@ -329,24 +329,25 @@ async function crearFacturaAlegra(mesa, items, subtotal, propina, total, metodoP
 }
 const BEV_CAT="Bebidas & Cócteles";
 const MENU=[
-  {cat:"Para Comenzar",items:[{id:"tiradito",name:"Tiradito de Pescado",price:44000},{id:"cev_carretillero",name:"Ceviche Carretillero",price:52000},{id:"cev_mixto",name:"Ceviche Mixto",price:63000},{id:"coctel_camaron",name:"Coctel de Camarón",price:35000},{id:"cev_limeno",name:"Ceviche Limeño",price:81000},{id:"anillos_calamar",name:"Anillos de Calamar",price:49000},{id:"pulpo_vinagreta",name:"Pulpo a la Vinagreta",price:52000}]},
-  {cat:"Para Compartir",items:[{id:"huevas_pescado",name:"Huevas de Pescado",price:65000},{id:"bocaditos_bacalao",name:"Bocaditos de Bacalao",price:48000},{id:"canastillas_camaron",name:"Canastillas de Camarón a la Huancaína",price:59000},{id:"langostinos_dinamita",name:"Langostinos Dinamita",price:70000},{id:"mariscada_parrilla",name:"Mariscada a la Parrilla",price:194000}]},
-  {cat:"Sopas & Cremas",items:[{id:"sopa_levantamuertos",name:"Sopa Levantamuertos",price:32000},{id:"cazuela_mar_leva",name:"Cazuela Mar de Leva",price:65000},{id:"chupe_camaron",name:"Chupe de Camarón",price:59000},{id:"sopa_casa",name:"Sopa de la Casa",price:16000}]},
-  {cat:"Fritos del Mar",items:[{id:"mojarra",name:"Mojarra Roja ",price:43000},{id:"mojarra",name:"Mojarra Negra",price:43000},{id:"robalo_posta",name:"Robalo Posta",price:62000},{id:"posta_sierra",name:"Posta de Sierra",price:59000},{id:"pargo_rojo",name:"Pargo Rojo",price:null},{id:"lebranche",name:"Lebranche",price:null},{id:"sabalo",name:"Sábalo",price:null},{id:"mero",name:"Mero",price:null}]},
-  {cat:"Especiales del Mar",items:[{id:"salmon_finas_hierbas",name:"Salmón a las Finas Hierbas",price:70000},{id:"salmon_pina_naranja",name:"Salmón en Piña Naranja",price:73000},{id:"salmon_toscana",name:"Salmón en Salsa Toscana",price:75000},{id:"salmon_huancaina",name:"Salmón a la Huancaína con Camarones",price:81000},{id:"robalo_ajillo",name:"Robalo al Ajillo",price:70000},{id:"robalo_encocado",name:"Robalo Encocado",price:63000},{id:"filete_mar",name:"Filete de Pescado a la Mar",price:73000},{id:"robalo_limon",name:"Robalo al Limón",price:65000},{id:"robalo_al_horno",name:"Robalo al Horno",price:81000},{id:"sierra_encocada",name:"Sierra Encocada",price:65000},{id:"escabeche",name:"Escabeche (Sierra o Barracuda)",price:70000},{id:"langostinos_encocados",name:"Langostinos Encocados",price:65000},{id:"camarones_ajillo",name:"Camarones al Ajillo",price:63000},{id:"langosta",name:"Langosta",price:null},{id:"pulpo_grill",name:"Pulpo al Grill",price:65000},{id:"pulpo_ajillo",name:"Pulpo al Ajillo",price:70000}]},
-  {cat:"Combinados Marinos",items:[{id:"el_tradicional",name:"El Tradicional",price:85000},{id:"el_limeno",name:"El Limeño",price:85000},{id:"el_poseidon",name:"El Poseidón",price:85000},{id:"el_pescador",name:"El Pescador",price:86000}]},
-  {cat:"Arroces de la Casa",items:[{id:"risotto_huancaina",name:"Risotto a la Huancaína",price:81000},{id:"arroz_camaron_coco",name:"Arroz Cremoso de Camarón con Coco",price:70000},{id:"arroz_camaron",name:"Arroz de Camarón",price:63000},{id:"risotto_tinta",name:"Risotto en Tinta de Calamar",price:81000},{id:"arroz_chaufa",name:"Arroz Chaufa de Mariscos",price:70000}]},
-  {cat:"Pastas",items:[{id:"fetuccini_camaron",name:"Fetuccini con Camarón",price:52000},{id:"fetuccini_tinta",name:"Fetuccini en Tinta de Calamar con Langostinos",price:59000},{id:"linguini_frutos_mar",name:"Linguini Frutos del Mar",price:65000},{id:"fetuccini_huancaina",name:"Fetuccini en Salsa Huancaína",price:65000},{id:"fetuccini_verde",name:"Fetuccini Verde",price:65000}]},
-  {cat:"De la Tierra",items:[{id:"baby_beef",name:"Baby Beef",price:65000},{id:"lomo_saltado",name:"Lomo Saltado",price:70000},{id:"lomo_pimienta",name:"Lomo a la Pimienta",price:70000},{id:"mar_y_tierra",name:"Mar y Tierra",price:95000},{id:"pechuga_hierbas",name:"Pechuga Finas Hierbas",price:45000},{id:"pechuga_gratinada",name:"Pechuga Gratinada",price:52000},{id:"pollo_saltado",name:"Pollo Saltado",price:56000}]},
-  {cat:"Vegetarianos & Veganos",items:[{id:"risotto_champinones",name:"Risotto Cremoso de Champiñones",price:59000},{id:"arroz_ajonjoli",name:"Arroz de Ajonjolí con Tortilla",price:62000},{id:"boronia_costena",name:"Boronia Costeña",price:49000},{id:"pastas_veganas",name:"Pastas Veganas",price:49000}]},
-  {cat:"Adicionales",items:[{id:"salsa_camaron",name:"Salsa de Camarón",price:27000},{id:"salsa_frutos_mar",name:"Salsa Frutos del Mar",price:30000},{id:"porcion_arroz_coco",name:"Porción Arroz con Coco",price:13000},{id:"porcion_patacon",name:"Porción de Patacón",price:9000},{id:"porcion_papas",name:"Porción de Papas a la Francesa",price:15000}]},
+  {cat:"Para Comenzar",items:[{id:"tiradito",name:"Tiradito de Pescado",price:41000},{id:"cev_carretillero",name:"Ceviche Carretillero",price:48000},{id:"cev_mixto",name:"Ceviche Mixto",price:58000},{id:"coctel_camaron",name:"Coctel de Camarón",price:32000},{id:"cev_limeno",name:"Ceviche Limeño",price:75000},{id:"anillos_calamar",name:"Anillos de Calamar",price:45000},{id:"pulpo_vinagreta",name:"Pulpo a la Vinagreta",price:48000}]},
+  {cat:"Para Compartir",items:[{id:"huevas_pescado",name:"Huevas de Pescado",price:55900},{id:"bocaditos_bacalao",name:"Bocaditos de Bacalao",price:48000},{id:"canastillas_camaron",name:"Canastillas de Camarón a la Huancaína",price:55000},{id:"langostinos_dinamita",name:"Langostinos Dinamita",price:65000},{id:"mariscada_parrilla",name:"Mariscada a la Parrilla",price:180000}]},
+  {cat:"Sopas & Cremas",items:[{id:"sopa_levantamuertos",name:"Sopa Levantamuertos",price:30000},{id:"cazuela_mar_leva",name:"Cazuela Mar de Leva",price:60000},{id:"chupe_camaron",name:"Chupe de Camarón",price:55000},{id:"sopa_casa",name:"Sopa de la Casa",price:15000}]},
+  {cat:"Fritos del Mar",items:[{id:"mojarra",name:"Mojarra Roja / Negra",price:42000},{id:"robalo_posta",name:"Robalo Posta",price:57000},{id:"posta_sierra",name:"Posta de Sierra",price:55000},{id:"pargo_rojo",name:"Pargo Rojo",price:null},{id:"lebranche",name:"Lebranche",price:null},{id:"sabalo",name:"Sábalo",price:null},{id:"mero",name:"Mero",price:null}]},
+  {cat:"Especiales del Mar",items:[{id:"salmon_finas_hierbas",name:"Salmón a las Finas Hierbas",price:65000},{id:"salmon_pina_naranja",name:"Salmón en Piña Naranja",price:68000},{id:"salmon_toscana",name:"Salmón en Salsa Toscana",price:69000},{id:"salmon_huancaina",name:"Salmón a la Huancaína con Camarones",price:75000},{id:"robalo_ajillo",name:"Robalo al Ajillo",price:65000},{id:"robalo_encocado",name:"Robalo Encocado",price:58000},{id:"filete_mar",name:"Filete de Pescado a la Mar",price:68000},{id:"robalo_limon",name:"Robalo al Limón",price:60000},{id:"robalo_al_horno",name:"Robalo al Horno",price:75000},{id:"sierra_encocada",name:"Sierra Encocada",price:55000},{id:"escabeche",name:"Escabeche (Sierra o Barracuda)",price:65000},{id:"langostinos_encocados",name:"Langostinos Encocados",price:60000},{id:"camarones_ajillo",name:"Camarones al Ajillo",price:58000},{id:"langosta",name:"Langosta",price:null},{id:"pulpo_grill",name:"Pulpo al Grill",price:60000},{id:"pulpo_ajillo",name:"Pulpo al Ajillo",price:65000}]},
+  {cat:"Combinados Marinos",items:[{id:"el_tradicional",name:"El Tradicional",price:79000},{id:"el_limeno",name:"El Limeño",price:79000},{id:"el_poseidon",name:"El Poseidón",price:79000},{id:"el_pescador",name:"El Pescador",price:80000}]},
+  {cat:"Arroces de la Casa",items:[{id:"risotto_huancaina",name:"Risotto a la Huancaína",price:75000},{id:"arroz_camaron_coco",name:"Arroz Cremoso de Camarón con Coco",price:65000},{id:"arroz_camaron",name:"Arroz de Camarón",price:58000},{id:"risotto_tinta",name:"Risotto en Tinta de Calamar",price:75000},{id:"arroz_chaufa",name:"Arroz Chaufa de Mariscos",price:65000}]},
+  {cat:"Pastas",items:[{id:"fetuccini_camaron",name:"Fetuccini con Camarón",price:48000},{id:"fetuccini_tinta",name:"Fetuccini en Tinta de Calamar con Langostinos",price:55000},{id:"linguini_frutos_mar",name:"Linguini Frutos del Mar",price:60000},{id:"fetuccini_huancaina",name:"Fetuccini en Salsa Huancaína",price:60000},{id:"fetuccini_verde",name:"Fetuccini Verde",price:60000}]},
+  {cat:"De la Tierra",items:[{id:"baby_beef",name:"Baby Beef",price:60000},{id:"lomo_saltado",name:"Lomo Saltado",price:65000},{id:"lomo_pimienta",name:"Lomo a la Pimienta",price:65000},{id:"mar_y_tierra",name:"Mar y Tierra",price:87900},{id:"pechuga_hierbas",name:"Pechuga Finas Hierbas",price:42000},{id:"pechuga_gratinada",name:"Pechuga Gratinada",price:48000},{id:"pollo_saltado",name:"Pollo Saltado",price:52000}]},
+  {cat:"Vegetarianos & Veganos",items:[{id:"risotto_champinones",name:"Risotto Cremoso de Champiñones",price:55000},{id:"arroz_ajonjoli",name:"Arroz de Ajonjolí con Tortilla",price:57000},{id:"boronia_costena",name:"Boronia Costeña",price:45000},{id:"pastas_veganas",name:"Pastas Veganas",price:45000}]},
+  {cat:"Adicionales",items:[{id:"salsa_camaron",name:"Salsa de Camarón",price:25000},{id:"salsa_frutos_mar",name:"Salsa Frutos del Mar",price:28000},{id:"porcion_arroz_coco",name:"Porción Arroz con Coco",price:12000},{id:"porcion_patacon",name:"Porción de Patacón",price:8000},{id:"porcion_papas",name:"Porción de Papas a la Francesa",price:14000}]},
   {cat:"Postres",items:[{id:"flan_napolitano",name:"Flan Napolitano",price:22000},{id:"colita_raton",name:"Colita de Ratón con Helado",price:25000},{id:"panacota_maracuya",name:"Panacota de Maracuyá",price:22000},{id:"panacota_frutos_rojos",name:"Panacota Frutos Rojos",price:22000}]},
-  {cat:"Bebidas & Cócteles",items:[{id:"limonada_coco",name:"Limonada de Coco",price:16000},{id:"limonada_piña_hierbabuena",name:"Limonada piña Hierbabuena",price:13000},{id:"limonada_hierbabuena",name:"Limonada Hierbabuena",price:13000},{id:"jarra_de_limonada_cerezada",name:"jarra de liomonada cerezada",price:40000},{id:"limonada_natural",name:"Limonada Natural",price:12000},{id:"limonada_maracumango",name:"Limonada Maracumango",price:16000},{id:"copa_vino",name:"Copa de Vino",price:32000},{id:"margarita_tradicional",name:"Margarita Tradicional",price:35000},{id:"mojito",name:"Mojito",price:27000},{id:"caipirinha",name:"Caipirinha",price:30000},{id:"jarra_sangria",name:"Jarra de Sangría",price:81000},{id:"cuba_libre",name:"Cuba Libre",price:24000},{id:"aguila",name:"Águila Light / Original",price:8000},{id:"corona",name:"Corona",price:13000},{id:"coronita",name:"Coronita",price:9000},{id:"club_colombia",name:"Club Colombia Lata",price:9000},{id:"agua_manantial",name:"Agua manantial",price:11000},{id:"quatro",name:"quatro",price:9000},{id:"kola_roman",name:"kola roman",price:9000},{id:"ginger",name:"ginger",price:9000},{id:"smirnoft",name:"smirnoft",price:15000},{id:"hatsu",name:"hatsu",price:10000},{id:"stella",name:"Stella",price:13000},{id:"bretaña",name:"bretaña",price:9000},{id:"modelo",name:"Modelo",price:16000},{id:"gueitore",name:"gueitore",price:10000},{id:"coca_cola_zero",name:"Coca Cola zero",price:9000},{id:"agua_manantial_con_gas",name:"Agua Manantial con agas",price:9000},{id:"coca_cola",name:"Coca Cola",price:9000}]}
+  {cat:"Bebidas & Cócteles",items:[{id:"limonada_coco",name:"Limonada de Coco",price:15000},{id:"limonada_hierbabuena",name:"Limonada Hierbabuena",price:12000},{id:"limonada_natural",name:"Limonada Natural",price:10000},{id:"limonada_maracumango",name:"Limonada Maracumango",price:15000},{id:"copa_vino",name:"Copa de Vino",price:30000},{id:"margarita_tradicional",name:"Margarita Tradicional",price:32000},{id:"mojito",name:"Mojito",price:25000},{id:"caipirinha",name:"Caipirinha",price:28000},{id:"jarra_sangria",name:"Jarra de Sangría",price:75000},{id:"cuba_libre",name:"Cuba Libre",price:22000},{id:"aguila",name:"Águila Light / Original",price:7000},{id:"corona",name:"Corona",price:12000},{id:"coronita",name:"Coronita",price:8000},{id:"club_colombia",name:"Club Colombia Lata",price:8000},{id:"agua",name:"Agua",price:6000},{id:"stella",name:"Stella",price:12000},{id:"modelo",name:"Modelo",price:15000},{id:"agua_manantial",name:"Agua Manantial",price:10000},{id:"coca_cola",name:"Coca Cola",price:8000}]}
 ];
 const PREP_MIN=60,NUM_MESAS=30;
 let selectedTable=null,cart={},currentView="launcher";
 let ordersCache=[],inventory={},fbOrderListener=null,fbInvListener=null;
 let adminTab="cuentas",detalleMesa=null,editingOrderId=null,scheduledTime=null,incluyePropina=true;
+function escapeHtml(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 let preciosVar={},especialesCart=[],metodoPago="efectivo";
 let prevOrderIds=new Set(),prevListoIds=new Set();
 let filtroDesde="",filtroHasta="";
@@ -471,7 +472,7 @@ function renderMesero(){
     h+='</div></div>';
     especialesCart.forEach((e,idx)=>{
       const destIcon=e.dest==="barra"?"🍹 Barra":"🍳 Cocina";
-      h+=`<div class="especial-item"><div><div class="especial-item-name">${e.qty}× ${e.nombre} <span style="font-size:11px;font-weight:600;opacity:0.8;">${destIcon}</span></div><div class="especial-item-sub">Precio lo pone el admin al facturar</div></div><button onclick="quitarEspecial(${idx})" style="color:var(--coral-dark);font-size:18px;font-weight:700;">✕</button></div>`;
+      h+=`<div class="especial-item"><div><div class="especial-item-name">${e.qty}× ${escapeHtml(e.nombre)} <span style="font-size:11px;font-weight:600;opacity:0.8;">${destIcon}</span></div><div class="especial-item-sub">Precio lo pone el admin al facturar</div></div><button onclick="quitarEspecial(${idx})" style="color:var(--coral-dark);font-size:18px;font-weight:700;">✕</button></div>`;
     });
     MENU.forEach(group=>{
       const bev=group.cat===BEV_CAT;
@@ -531,7 +532,7 @@ function mostrarResumen(){
   });
   // Especiales
   especialesCart.forEach(e=>{
-    h+=`<div class="modal-esp"><div class="modal-esp-name">${e.qty}× ${e.nombre}</div><div class="modal-esp-sub">Precio lo pone el admin al facturar</div></div>`;
+    h+=`<div class="modal-esp"><div class="modal-esp-name">${e.qty}× ${escapeHtml(e.nombre)}</div><div class="modal-esp-sub">Precio lo pone el admin al facturar</div></div>`;
   });
   // Nota de mesa
   if(notaMesa.trim()){
@@ -563,15 +564,28 @@ function sendOrder(){
 
 function saveEdit(){
   if(!editingOrderId)return;
-  const entries=Object.entries(cart);if(entries.length===0)return;
-  const items=entries.map(([id,c])=>{const m=getMeta(id);return{id,name:m?m.name:c.name,price:c.price||0,qty:c.qty,note:c.note||"",bev:isBev(id)};});
+  const entries=Object.entries(cart);if(entries.length===0&&especialesCart.length===0)return;
+  const ordObj=ordersCache.find(o=>o.id===editingOrderId);
+  const ordType=ordObj?ordObj.type:"cocina";
+  let items=entries.map(([id,c])=>{const m=getMeta(id);return{id,name:m?m.name:c.name,price:c.price||0,qty:c.qty,note:c.note||"",bev:isBev(id)};});
+  especialesCart.forEach(e=>{items.push({id:"esp_"+Date.now()+"_"+Math.random().toString(36).slice(2,5),name:e.nombre,price:null,qty:e.qty,note:"",bev:e.dest==="barra",especial:true});});
+  const mismoTipo=items.filter(it=>(ordType==="barra")===!!it.bev);
+  const otroTipo=items.filter(it=>(ordType==="barra")!==!!it.bev);
   // Actualizar todo el pedido de una sola vez
   const update={
-    items:items,
+    items:mismoTipo,
     scheduledTime:scheduledTime||null,
     updatedAt:new Date().toISOString()
   };
-  db.ref("orders/"+editingOrderId).update(update).then(()=>{
+  const ps=[db.ref("orders/"+editingOrderId).update(update)];
+  if(otroTipo.length>0){
+    // Algún especial iba para el otro destino (cocina/barra) distinto al del pedido que se está editando: se crea un pedido nuevo aparte para que llegue a la vista correcta
+    const base={table:selectedTable,createdAt:new Date().toISOString(),status:"pendiente",scheduledTime:scheduledTime||null,notaMesa:notaMesa||null};
+    const nuevoTipo=ordType==="barra"?"cocina":"barra";
+    const nuevoId="ord_"+Date.now()+"_"+Math.random().toString(36).slice(2,5);
+    ps.push(db.ref("orders/"+nuevoId).set({...base,id:nuevoId,items:otroTipo,type:nuevoTipo}));
+  }
+  Promise.all(ps).then(()=>{
     showToast("✓ Pedido actualizado");
     cart={};editingOrderId=null;scheduledTime=null;especialesCart=[];
     renderMesero();
@@ -604,8 +618,8 @@ function renderKDS(bodyId,active,isBarra){
       h+=`<div class="oc-head"><span class="oc-mesa">Mesa ${order.table}</span><span class="oc-timer ${t.level==="programado"?"prog":t.level}">${fmtTimer(t)}</span></div>`;
       if(t.level==="programado")h+=`<div class="oc-prog">🕐 Para las ${order.scheduledTime}</div>`;
       h+=`<div class="oc-meta">Entró hace ${t.elapsed} min · ${hora}</div>`;
-      if(order.notaMesa)h+=`<div style="background:#e9f0ea;border-radius:7px;padding:5px 9px;font-size:12px;color:var(--teal);font-weight:700;margin-bottom:6px;">📝 ${order.notaMesa}</div>`;
-      (order.items||[]).forEach(it=>{h+=`<div class="oc-item"><b>${it.qty}×</b> ${it.name}</div>`;if(it.note)h+=`<div class="oc-note">↳ ${it.note}</div>`;});
+      if(order.notaMesa)h+=`<div style="background:#e9f0ea;border-radius:7px;padding:5px 9px;font-size:12px;color:var(--teal);font-weight:700;margin-bottom:6px;">📝 ${escapeHtml(order.notaMesa)}</div>`;
+      (order.items||[]).forEach(it=>{h+=`<div class="oc-item"><b>${it.qty}×</b> ${escapeHtml(it.name)}</div>`;if(it.note)h+=`<div class="oc-note">↳ ${escapeHtml(it.note)}</div>`;});
       h+=`<div class="oc-actions">`;
       if(col.key==="pendiente"){h+=`<button class="btn-start" onclick="setStatus('${order.id}','preparacion')">Empezar</button><button class="btn-cancel" onclick="cancelarPedido('${order.id}')">Cancelar</button>`;}
       if(col.key==="preparacion")h+=`<button class="${isBarra?"btn-bev-ready":"btn-ready"}" onclick="setStatus('${order.id}','listo')">Listo</button>`;
@@ -632,8 +646,8 @@ function buildComandaHTML(order){
       <span style="font-size:13px;font-weight:700;color:#000;">${dest} · ${hora}</span>
     </div>
     ${order.scheduledTime?`<div style="font-weight:800;color:#000;font-size:14px;margin-bottom:8px;">🕐 Para las ${order.scheduledTime}</div>`:""}
-    ${order.notaMesa?`<div style="font-size:13px;font-weight:700;color:#000;background:#eee;padding:5px 8px;border-radius:5px;margin-bottom:7px;">📝 ${order.notaMesa}</div>`:""}
-    ${(order.items||[]).map(it=>`<div style="font-size:16px;padding:5px 0;font-weight:700;color:#000;"><b style="font-size:18px;font-weight:900;">${it.qty}×</b> ${it.name}</div>${it.note?`<div style="font-size:12px;font-weight:700;color:#000;padding-left:14px;">↳ ${it.note}</div>`:""}`).join("")}
+    ${order.notaMesa?`<div style="font-size:13px;font-weight:700;color:#000;background:#eee;padding:5px 8px;border-radius:5px;margin-bottom:7px;">📝 ${escapeHtml(order.notaMesa)}</div>`:""}
+    ${(order.items||[]).map(it=>`<div style="font-size:16px;padding:5px 0;font-weight:700;color:#000;"><b style="font-size:18px;font-weight:900;">${it.qty}×</b> ${escapeHtml(it.name)}</div>${it.note?`<div style="font-size:12px;font-weight:700;color:#000;padding-left:14px;">↳ ${escapeHtml(it.note)}</div>`:""}`).join("")}
     <div style="font-size:12px;font-weight:700;color:#000;border-top:1px dashed #000;padding-top:6px;margin-top:8px;">La mar sabor peruano · ${new Date().toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"})}</div>
   </div>`;
 }
@@ -751,7 +765,7 @@ function renderAdmin(){
     filtradas.forEach(o=>{
       const tot=o.items.reduce((s,it)=>s+(it.price||0)*it.qty,0);
       const fecha=new Date(o.createdAt).toLocaleString("es-CO",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
-      h+=`<tr><td>Mesa ${o.table}</td><td>${fecha}${o.scheduledTime?` <b style="color:var(--gold)">→${o.scheduledTime}</b>`:""}</td><td>${o.type==="barra"?"🍹":"🍳"}</td><td>${o.items.map(it=>it.qty+"× "+it.name).join(", ")}</td><td>${fmtCOP(tot)}</td><td>${o.metodoPago||"—"}</td><td><span class="chip ${o.status}">${o.status}</span></td></tr>`;
+      h+=`<tr><td>Mesa ${o.table}</td><td>${fecha}${o.scheduledTime?` <b style="color:var(--gold)">→${o.scheduledTime}</b>`:""}</td><td>${o.type==="barra"?"🍹":"🍳"}</td><td>${o.items.map(it=>it.qty+"× "+escapeHtml(it.name)).join(", ")}</td><td>${fmtCOP(tot)}</td><td>${o.metodoPago||"—"}</td><td><span class="chip ${o.status}">${o.status}</span></td></tr>`;
     });
     h+='</tbody></table>';
   }
@@ -775,7 +789,7 @@ function renderAdmin(){
     h+='<table class="inv-table"><thead><tr><th>Mesa</th><th>Producto</th><th>Cant.</th><th>Precio unit.</th><th></th></tr></thead><tbody>';
     if(pendientes.length===0)h+='<tr><td colspan="5" style="text-align:center;opacity:0.5">No hay platos especiales pendientes de precio</td></tr>';
     pendientes.forEach((p,i)=>{
-      h+=`<tr><td>Mesa ${p.mesa} ${p.dest}</td><td>${p.name}</td><td style="text-align:center">${p.qty}</td><td><input type="number" min="0" id="esp-price-${i}" placeholder="Ej: 25000" style="border:2px solid var(--gold);border-radius:6px;padding:5px 8px;font-size:13px;width:110px;"/></td><td><button class="especial-add-btn" onclick="guardarPrecioEspecial('${p.orderId}',${p.idx},'esp-price-${i}')">💾 Guardar</button></td></tr>`;
+      h+=`<tr><td>Mesa ${p.mesa} ${p.dest}</td><td>${escapeHtml(p.name)}</td><td style="text-align:center">${p.qty}</td><td><input type="number" min="0" id="esp-price-${i}" placeholder="Ej: 25000" style="border:2px solid var(--gold);border-radius:6px;padding:5px 8px;font-size:13px;width:110px;"/></td><td><button class="especial-add-btn" onclick="guardarPrecioEspecial('${p.orderId}',${p.idx},'esp-price-${i}')">💾 Guardar</button></td></tr>`;
     });
     h+='</tbody></table>';
   }
@@ -840,12 +854,12 @@ function setMetodoPago(m){metodoPago=m;renderDetalleMesa(detalleMesa);}
 async function renderDetalleMesa(mesa){
   const mesaOrds=ordersCache.filter(o=>o.table===mesa&&o.status!=="entregado"&&o.status!=="cancelado").sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt));
   if(!window._preciosTemp)window._preciosTemp={};
-  const subtotal=(()=>{let total=0;mesaOrds.forEach(o=>{o.items.forEach(it=>{if(it.price!=null&&it.price>0){total+=it.price*it.qty;}else{const key=it.id+"_"+it.name;total+=(window._preciosTemp[key]?parseInt(window._preciosTemp[key])||0:0)*it.qty;}});});return total;})();
+  const subtotal=(()=>{let total=0;mesaOrds.forEach(o=>{o.items.forEach(it=>{if(it.price!=null&&it.price>0){total+=it.price*it.qty;}else{const key=it.id;total+=(window._preciosTemp[key]?parseInt(window._preciosTemp[key])||0:0)*it.qty;}});});return total;})();
   const propina=incluyePropina?Math.round(subtotal*0.1):0;
   const total=subtotal+propina;
   const ahora=new Date().toLocaleString("es-CO",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"});
   const foodMap={},bevMap={};
-  mesaOrds.forEach(o=>{const map=o.type==="barra"?bevMap:foodMap;o.items.forEach(it=>{const key=it.id+"_"+it.name;if(!map[key])map[key]={id:it.id,name:it.name,price:it.price||0,qty:0,sinPrecio:it.price===null||it.price===0};map[key].qty+=it.qty;});});
+  mesaOrds.forEach(o=>{const map=o.type==="barra"?bevMap:foodMap;o.items.forEach(it=>{const key=it.id;if(!map[key])map[key]={id:it.id,name:it.name,price:it.price||0,qty:0,sinPrecio:it.price===null||it.price===0};map[key].qty+=it.qty;});});
   const foodItems=Object.values(foodMap),bevItems=Object.values(bevMap);
   const snapFac=await db.ref("factura_counter").once("value");
   const numFac=(snapFac.val()||0)+1;
@@ -863,15 +877,15 @@ async function renderDetalleMesa(mesa){
   h+=`<div class="factura-meta"><span>Mesa ${mesa}</span><span>N° ${String(numFac).padStart(4,"0")}</span><span>${ahora}</span></div>`;
   h+='<table class="fac-table"><thead><tr><th>Ítem</th><th>Cant.</th><th>P. Unit.</th><th>Total</th></tr></thead><tbody>';
   const renderItemRow=(it)=>{
-    const key=it.id+"_"+it.name;
+    const key=it.id;
     // Mostrar campo editable si: precio es null, 0, o es un especial
     const needsPrice=it.sinPrecio||it.especial||(it.price===null)||(it.price===0&&it.id&&it.id.startsWith("esp_"));
     const pf=needsPrice?(window._preciosTemp[key]||0):it.price;
     if(needsPrice){
       const label=it.especial?'especial':'según peso';
-      return `<tr><td>${it.name} <span style="font-size:10px;background:#fdf3da;color:#8a6a1a;padding:1px 6px;border-radius:8px;font-weight:700;">${label}</span></td><td style="text-align:center">${it.qty}</td><td><input type="number" min="0" placeholder="$ precio" value="${window._preciosTemp[key]||""}" style="border:2px solid var(--gold);border-radius:6px;padding:4px 7px;font-size:13px;width:100px;" oninput="setPrecioTemp('${key}',this.value)"/></td><td style="font-weight:700;">${pf>0?fmtCOP(pf*it.qty):"—"}</td></tr>`;
+      return `<tr><td>${escapeHtml(it.name)} <span style="font-size:10px;background:#fdf3da;color:#8a6a1a;padding:1px 6px;border-radius:8px;font-weight:700;">${label}</span></td><td style="text-align:center">${it.qty}</td><td><input type="number" min="0" placeholder="$ precio" value="${window._preciosTemp[key]||""}" style="border:2px solid var(--gold);border-radius:6px;padding:4px 7px;font-size:13px;width:100px;" oninput="setPrecioTemp('${key}',this.value)"/></td><td style="font-weight:700;">${pf>0?fmtCOP(pf*it.qty):"—"}</td></tr>`;
     }
-    return `<tr><td>${it.name}</td><td style="text-align:center">${it.qty}</td><td>${fmtCOP(it.price)}</td><td>${fmtCOP(it.price*it.qty)}</td></tr>`;
+    return `<tr><td>${escapeHtml(it.name)}</td><td style="text-align:center">${it.qty}</td><td>${fmtCOP(it.price)}</td><td>${fmtCOP(it.price*it.qty)}</td></tr>`;
   };
   if(foodItems.length>0){h+='<tr class="fac-cat-row"><td colspan="4">🍽 Cocina</td></tr>';foodItems.forEach(it=>{h+=renderItemRow(it);});}
   if(bevItems.length>0){h+='<tr class="fac-cat-row"><td colspan="4">🍹 Barra</td></tr>';bevItems.forEach(it=>{h+=renderItemRow(it);});}
@@ -897,15 +911,15 @@ async function renderDetalleMesa(mesa){
   if(foodItems.length>0){
     h+=`<div style="font-size:11px;font-weight:800;text-transform:uppercase;color:#555;margin-bottom:6px;">🍽 Cocina</div>`;
     foodItems.forEach(it=>{
-      if(it.sinPrecio){const key=it.id+"_"+it.name;const pf=window._preciosTemp&&window._preciosTemp[key]?window._preciosTemp[key]:0;h+=`<div style="display:flex;justify-content:space-between;padding:3px 0;"><span>${it.qty}× ${it.name}</span><span>${pf>0?fmtCOP(pf*it.qty):"—"}</span></div>`;}
-      else{h+=`<div style="display:flex;justify-content:space-between;padding:3px 0;"><span>${it.qty}× ${it.name}</span><span>${fmtCOP(it.price*it.qty)}</span></div>`;}
+      if(it.sinPrecio){const key=it.id;const pf=window._preciosTemp&&window._preciosTemp[key]?window._preciosTemp[key]:0;h+=`<div style="display:flex;justify-content:space-between;padding:3px 0;"><span>${it.qty}× ${escapeHtml(it.name)}</span><span>${pf>0?fmtCOP(pf*it.qty):"—"}</span></div>`;}
+      else{h+=`<div style="display:flex;justify-content:space-between;padding:3px 0;"><span>${it.qty}× ${escapeHtml(it.name)}</span><span>${fmtCOP(it.price*it.qty)}</span></div>`;}
     });
   }
   if(bevItems.length>0){
     h+=`<div style="font-size:11px;font-weight:800;text-transform:uppercase;color:#555;margin:8px 0 6px;">🍹 Barra</div>`;
     bevItems.forEach(it=>{
-      if(it.sinPrecio){const key=it.id+"_"+it.name;const pf=window._preciosTemp&&window._preciosTemp[key]?window._preciosTemp[key]:0;h+=`<div style="display:flex;justify-content:space-between;padding:3px 0;"><span>${it.qty}× ${it.name}</span><span>${pf>0?fmtCOP(pf*it.qty):"—"}</span></div>`;}
-      else{h+=`<div style="display:flex;justify-content:space-between;padding:3px 0;"><span>${it.qty}× ${it.name}</span><span>${fmtCOP(it.price*it.qty)}</span></div>`;}
+      if(it.sinPrecio){const key=it.id;const pf=window._preciosTemp&&window._preciosTemp[key]?window._preciosTemp[key]:0;h+=`<div style="display:flex;justify-content:space-between;padding:3px 0;"><span>${it.qty}× ${escapeHtml(it.name)}</span><span>${pf>0?fmtCOP(pf*it.qty):"—"}</span></div>`;}
+      else{h+=`<div style="display:flex;justify-content:space-between;padding:3px 0;"><span>${it.qty}× ${escapeHtml(it.name)}</span><span>${fmtCOP(it.price*it.qty)}</span></div>`;}
     });
   }
   h+=`</div>
@@ -928,7 +942,7 @@ async function cerrarMesaYImprimir(mesa,pago){
   // Calcular subtotal y propina para guardar
   if(!window._preciosTemp)window._preciosTemp={};
   const subtotalMesa=mesaOrds.reduce((s,o)=>s+o.items.reduce((ss,it)=>{
-    const p=it.price>0?it.price:(window._preciosTemp[it.id+"_"+it.name]||0);
+    const p=it.price>0?it.price:(window._preciosTemp[it.id]||0);
     return ss+p*it.qty;
   },0),0);
   const propinaMesa=incluyePropina?Math.round(subtotalMesa*0.1):0;
