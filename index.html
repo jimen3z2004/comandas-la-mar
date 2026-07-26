@@ -378,7 +378,7 @@ function startListeners(onOrders){
   if(fbInvListener)db.ref("inventory").off("value",fbInvListener);
   fbOrderListener=db.ref("orders").on("value",snap=>{
     const d=snap.val()||{};
-    const newCache=Object.values(d).filter(o=>o&&o.id).map(o=>({...o,items:Array.isArray(o.items)?o.items:[]})).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+    const newCache=Object.entries(d).filter(([k,o])=>o).map(([k,o])=>({...o,id:k,items:Array.isArray(o.items)?o.items:[]})).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
     if(currentView==="cocina"||currentView==="barra"){
       newCache.forEach(o=>{if(!prevOrderIds.has(o.id)&&o.status==="pendiente")playBeep();});
     }
@@ -555,8 +555,9 @@ function sendOrder(){
   const base={table:selectedTable,createdAt:new Date().toISOString(),status:"pendiente",scheduledTime:scheduledTime||null,notaMesa:notaMesa||null};
   const food=allItems.filter(it=>!it.bev),bev=allItems.filter(it=>it.bev);
   const ps=[];
-  if(food.length>0)ps.push(db.ref("orders/ord_"+Date.now()+"f").set({...base,id:"ord_"+Date.now()+"f",items:food,type:"cocina"}));
-  if(bev.length>0)ps.push(db.ref("orders/ord_"+(Date.now()+1)+"b").set({...base,id:"ord_"+(Date.now()+1)+"b",items:bev,type:"barra"}));
+  const idFood="ord_"+Date.now()+"f",idBev="ord_"+(Date.now()+1)+"b";
+  if(food.length>0)ps.push(db.ref("orders/"+idFood).set({...base,id:idFood,items:food,type:"cocina"}));
+  if(bev.length>0)ps.push(db.ref("orders/"+idBev).set({...base,id:idBev,items:bev,type:"barra"}));
   const updates={};allItems.forEach(it=>{const cur=inventory[it.id];if(cur!=null)updates["inventory/"+it.id]=Math.max(0,cur-it.qty);});
   if(Object.keys(updates).length>0)db.ref().update(updates);
   Promise.all(ps).then(()=>{cart={};scheduledTime=null;especialesCart=[];notaMesa="";cerrarResumenBtn();showToast("✓ Pedido enviado — Mesa "+selectedTable);renderMesero();});
