@@ -764,13 +764,31 @@ function renderAdmin(){
     h+=`<label style="font-size:13px;font-weight:600;">Desde:</label><input type="date" id="f-desde" value="${desde}"/>`;
     h+=`<label style="font-size:13px;font-weight:600;">Hasta:</label><input type="date" id="f-hasta" value="${hasta}"/>`;
     h+=`<button onclick="aplicarFiltro()">Filtrar</button></div>`;
-    h+=`<div style="font-size:14px;font-weight:700;color:var(--teal);margin-bottom:12px;">Total: ${fmtCOP(totFiltro)} · ${filtradas.length} pedidos</div>`;
-    h+='<table><thead><tr><th>Mesa</th><th>Fecha/Hora</th><th>Destino</th><th>Platos</th><th>Total</th><th>Pago</th><th>Estado</th></tr></thead><tbody>';
-    if(filtradas.length===0)h+='<tr><td colspan="7" style="text-align:center;opacity:0.5">Sin pedidos en este período</td></tr>';
+    // Agrupar cocina + barra (y rondas pedidas en momentos distintos) de la misma cuenta:
+    // 1) si ya se cerró con el sistema nuevo, todos comparten el mismo updatedAt exacto
+    // 2) si es una cuenta vieja cerrada antes de eso, comparten el mismo subtotal/propina/pago cobrado
+    // 3) si nunca se ha cerrado, se agrupa por mesa+hora de creación (rondas del mismo envío)
+    const grupos={};
     filtradas.forEach(o=>{
-      const tot=o.items.reduce((s,it)=>s+(it.price||0)*it.qty,0);
-      const fecha=new Date(o.createdAt).toLocaleString("es-CO",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
-      h+=`<tr><td>Mesa ${o.table}</td><td>${fecha}${o.scheduledTime?` <b style="color:var(--gold)">→${o.scheduledTime}</b>`:""}</td><td>${o.type==="barra"?"🍹":"🍳"}</td><td>${o.items.map(it=>it.qty+"× "+escapeHtml(it.name)).join(", ")}</td><td>${fmtCOP(tot)}</td><td>${o.metodoPago||"—"}</td><td><span class="chip ${o.status}">${o.status}</span></td></tr>`;
+      let key;
+      if(o.updatedAt)key=o.table+"|u|"+o.updatedAt;
+      else if(o.subtotalCobrado!=null)key=o.table+"|c|"+o.subtotalCobrado+"|"+(o.propinaCobrada||0)+"|"+(o.metodoPago||"");
+      else key=o.table+"|t|"+o.createdAt;
+      if(!grupos[key])grupos[key]={table:o.table,createdAt:o.createdAt,scheduledTime:o.scheduledTime,items:[],metodoPago:o.metodoPago,statuses:new Set()};
+      grupos[key].items.push(...o.items);
+      grupos[key].statuses.add(o.status);
+      if(new Date(o.createdAt)<new Date(grupos[key].createdAt))grupos[key].createdAt=o.createdAt;
+      if(o.metodoPago)grupos[key].metodoPago=o.metodoPago;
+    });
+    const filas=Object.values(grupos).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+    h+=`<div style="font-size:14px;font-weight:700;color:var(--teal);margin-bottom:12px;">Total: ${fmtCOP(totFiltro)} · ${filas.length} cuentas</div>`;
+    h+='<table><thead><tr><th>Mesa</th><th>Fecha/Hora</th><th>Platos</th><th>Total</th><th>Pago</th><th>Estado</th></tr></thead><tbody>';
+    if(filas.length===0)h+='<tr><td colspan="6" style="text-align:center;opacity:0.5">Sin pedidos en este período</td></tr>';
+    filas.forEach(g=>{
+      const tot=g.items.reduce((s,it)=>s+(it.price||0)*it.qty,0);
+      const fecha=new Date(g.createdAt).toLocaleString("es-CO",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
+      const estado=g.statuses.has("entregado")&&g.statuses.size===1?"entregado":g.statuses.has("cancelado")&&g.statuses.size===1?"cancelado":Array.from(g.statuses).join(" / ");
+      h+=`<tr><td>Mesa ${g.table}</td><td>${fecha}${g.scheduledTime?` <b style="color:var(--gold)">→${g.scheduledTime}</b>`:""}</td><td>${g.items.map(it=>it.qty+"× "+escapeHtml(it.name)).join(", ")}</td><td>${fmtCOP(tot)}</td><td>${g.metodoPago||"—"}</td><td><span class="chip ${estado}">${estado}</span></td></tr>`;
     });
     h+='</tbody></table>';
   }
