@@ -341,7 +341,7 @@ const MENU=[
   {cat:"Vegetarianos & Veganos",items:[{id:"risotto_champinones",name:"Risotto Cremoso de Champiñones",price:59000},{id:"arroz_ajonjoli",name:"Arroz de Ajonjolí con Tortilla",price:62000},{id:"boronia_costena",name:"Boronia Costeña",price:49000},{id:"pastas_veganas",name:"Pastas Veganas",price:49000}]},
   {cat:"Adicionales",items:[{id:"salsa_camaron",name:"Salsa de Camarón",price:25000},{id:"salsa_frutos_mar",name:"Salsa Frutos del Mar",price:28000},{id:"porcion_arroz_coco",name:"Porción Arroz con Coco",price:12000},{id:"porcion_patacon",name:"Porción de Patacón",price:8000},{id:"porcion_papas",name:"Porción de Papas a la Francesa",price:14000}]},
   {cat:"Postres",items:[{id:"flan_napolitano",name:"Flan Napolitano",price:22000},{id:"colita_raton",name:"Colita de Ratón con Helado",price:25000},{id:"panacota_maracuya",name:"Panacota de Maracuyá",price:22000},{id:"panacota_frutos_rojos",name:"Panacota Frutos Rojos",price:22000}]},
-  {cat:"Bebidas & Cócteles",items:[{id:"limonada_coco",name:"Limonada de Coco",price:16000},{id:"limonada_hierbabuena",name:"Limonada Hierbabuena",price:13000},{id:"limonada_natural",name:"Limonada Natural",price:13000},{id:"limonada_maracumango",name:"Limonada Maracumango",price:16000},{id:"copa_vino",name:"Copa de Vino",price:32000},{id:"margarita_tradicional",name:"Margarita Tradicional",price:35000},{id:"mojito",name:"Mojito",price:27000},{id:"caipirinha",name:"Caipirinha",price:30000},{id:"jarra_sangria",name:"Jarra de Sangría",price:81000},{id:"cuba_libre",name:"Cuba Libre",price:24000},{id:"aguila",name:"Águila Light / Original",price:8000},{id:"corona",name:"Corona",price:13000},{id:"coronita",name:"Coronita",price:9000},{id:"club_colombia",name:"Club Colombia Lata",price:9000},{id:"agua",name:"Agua",price:6000},{id:"stella",name:"Stella",price:13000},{id:"modelo",name:"Modelo",price:16000},{id:"agua_manantial",name:"Agua Manantial",price:10000},{id:"coca_cola",name:"Coca Cola",price:9000},{id:"limonada_pina_hierbabuena",name:"Limonada de Piña, Limón y Hierbabuena",price:15000},{id:"limonada_cerezada",name:"Limonada Cerezada",price:16000},{id:"coca_cola_zero",name:"Coca Cola Zero",price:9000},{id:"bretana",name:"Bretaña",price:9000},{id:"agua_con_gas",name:"Agua con Gas",price:9000},{id:"club_botella",name:"Club Colombia Botella",price:10000},{id:"ginger",name:"Ginger",price:9000}]}
+  {cat:"Bebidas & Cócteles",items:[{id:"limonada_coco",name:"Limonada de Coco",price:16000},{id:"limonada_hierbabuena",name:"Limonada Hierbabuena",price:13000},{id:"limonada_natural",name:"Limonada Natural",price:13000},{id:"limonada_maracumango",name:"Limonada Maracumango",price:16000},{id:"copa_vino",name:"Copa de Vino",price:32000},{id:"margarita_tradicional",name:"Margarita Tradicional",price:35000},{id:"mojito",name:"Mojito",price:27000},{id:"caipirinha",name:"Caipirinha",price:30000},{id:"jarra_sangria",name:"Jarra de Sangría",price:81000},{id:"cuba_libre",name:"Cuba Libre",price:24000},{id:"aguila",name:"Águila Light / Original",price:8000},{id:"corona",name:"Corona",price:13000},{id:"coronita",name:"Coronita",price:9000},{id:"club_colombia",name:"Club Colombia Lata",price:9000},{id:"agua",name:"Agua",price:6000},{id:"stella",name:"Stella",price:13000},{id:"modelo",name:"Modelo",price:16000},{id:"agua_manantial",name:"Agua Manantial",price:10000},{id:"coca_cola",name:"Coca Cola",price:9000},{id:"limonada_pina_hierbabuena",name:"Limonada de Piña, Limón y Hierbabuena",price:15000},{id:"limonada_cerezada",name:"Limonada Cerezada",price:16000},{id:"coca_cola_zero",name:"Coca Cola Zero",price:9000},{id:"bretana",name:"Bretaña",price:9000},{id:"agua_con_gas",name:"Agua con Gas",price:9000},{id:"club_botella",name:"Club Colombia Botella",price:10000},{id:"ginger",name:"Ginger",price:9000},{id:"kola_roman",name:"Kola Román",price:9000},{id:"cuatro",name:"Cuatro",price:9000}]}
 ];
 const PREP_MIN=60,NUM_MESAS=30;
 let selectedTable=null,cart={},currentView="launcher";
@@ -365,7 +365,7 @@ function isBev(id){const g=MENU.find(g=>g.cat===BEV_CAT);return g?!!g.items.find
 function getMeta(id){const item=MENU.flatMap(g=>g.items).find(i=>i.id===id)||null;if(item&&item.price===null&&preciosVar[id]!=null)return{...item,price:preciosVar[id]};return item;}
 function getOccupied(){const s=new Set();ordersCache.filter(o=>o.status!=="entregado"&&o.status!=="cancelado").forEach(o=>s.add(o.table));return s;}
 function getReadyTables(){const s=new Set();ordersCache.filter(o=>o.status==="listo").forEach(o=>s.add(o.table));return s;}
-function getEditables(t){return ordersCache.filter(o=>o.table===t&&(o.status==="pendiente"||o.status==="preparacion"));}
+function getEditables(t){return ordersCache.filter(o=>o.table===t&&(o.status==="pendiente"||o.status==="preparacion"||o.status==="listo"));}
 function timerInfo(o){if(o.scheduledTime){return{level:"programado",remaining:null,elapsed:minSince(o.createdAt),prog:o.scheduledTime};}const e=minSince(o.createdAt),r=PREP_MIN-e;return{level:r>15?"ok":r>0?"warn":"late",remaining:r,elapsed:e};}
 function fmtTimer(t){if(t.level==="programado")return"🕐 "+t.prog;return t.remaining>0?"Faltan "+t.remaining+" min":"+"+Math.abs(t.remaining)+" min tarde";}
 function setDot(id,on){const d=document.getElementById(id);if(d)d.className="conn-dot"+(on?" on":"");}
@@ -577,7 +577,16 @@ function saveEdit(){
     const ids=editingOrderIds[tipo];
     if(itemsTipo.length>0){
       if(ids.length>0){
-        ps.push(db.ref("orders/"+ids[0]).update({...nowUpd,items:itemsTipo}));
+        const ordActual=ordersCache.find(o=>o.id===ids[0]);
+        // Si el pedido ya estaba "listo" y ahora tiene algo nuevo o en mayor cantidad, se regresa a pendiente para que lo preparen
+        let volverPendiente=false;
+        if(ordActual&&ordActual.status==="listo"){
+          const antes={};(ordActual.items||[]).forEach(it=>{antes[it.id]=(antes[it.id]||0)+it.qty;});
+          volverPendiente=itemsTipo.some(it=>it.qty>(antes[it.id]||0));
+        }
+        const upd={...nowUpd,items:itemsTipo};
+        if(volverPendiente){upd.status="pendiente";}
+        ps.push(db.ref("orders/"+ids[0]).update(upd));
         // Si había pedidos duplicados del mismo tipo (de un bug anterior), se consolidan y los sobrantes se cancelan
         for(let i=1;i<ids.length;i++)ps.push(db.ref("orders/"+ids[i]).update({...nowUpd,status:"cancelado"}));
       }else{
