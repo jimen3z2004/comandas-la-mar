@@ -506,7 +506,7 @@ function updateCartBar(){
   document.getElementById("cart-items-lbl").textContent=count+" ítem"+(count!==1?"s":"")+" · "+fmtCOP(total)+(scheduledTime?" · 🕐 "+scheduledTime:"");
   const btns=document.getElementById("cart-btns");
   if(!selectedTable||count===0){btns.innerHTML='<button class="cbtn" disabled>Enviar</button>';return;}
-  if(editingOrderId){btns.innerHTML='<button class="cbtn save" onclick="saveEdit()">Guardar cambios</button>';return;}
+  if(editingOrderId){btns.innerHTML='<button class="cbtn save" onclick="saveEdit()">Guardar cambios</button><button class="cbtn" style="background:var(--coral-dark);margin-top:8px;" onclick="eliminarMesaCompleta()">🗑 Eliminar mesa completa</button>';return;}
   if(hasBev&&hasFood){btns.innerHTML='<button class="cbtn both" onclick="mostrarResumen()">Ver resumen y enviar</button>';}
   else if(hasBev){btns.innerHTML='<button class="cbtn bev" onclick="mostrarResumen()">Ver resumen y enviar</button>';}
   else{btns.innerHTML='<button class="cbtn food" onclick="mostrarResumen()">Ver resumen y enviar</button>';}
@@ -563,6 +563,18 @@ function sendOrder(){
   Promise.all(ps).then(()=>{cart={};scheduledTime=null;especialesCart=[];notaMesa="";cerrarResumenBtn();showToast("✓ Pedido enviado — Mesa "+selectedTable);renderMesero();});
 }
 
+function eliminarMesaCompleta(){
+  if(!selectedTable)return;
+  if(!confirm("¿Eliminar TODO el pedido de la Mesa "+selectedTable+"? Esto cancela cocina y barra por completo. No se puede deshacer."))return;
+  const activos=ordersCache.filter(o=>o.table===selectedTable&&o.status!=="entregado"&&o.status!=="cancelado");
+  const updates={};
+  activos.forEach(o=>{updates["orders/"+o.id+"/status"]="cancelado";});
+  db.ref().update(updates).then(()=>{
+    showToast("🗑 Mesa "+selectedTable+" eliminada");
+    cart={};selectedTable=null;editingOrderId=null;editingOrderIds={cocina:[],barra:[]};scheduledTime=null;especialesCart=[];notaMesa="";
+    renderMesero();
+  }).catch(e=>{showToast("Error: "+e.message,"#b3402f");});
+}
 function saveEdit(){
   if(!editingOrderId)return;
   const entries=Object.entries(cart);if(entries.length===0&&especialesCart.length===0)return;
