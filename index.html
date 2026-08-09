@@ -370,7 +370,8 @@ function timerInfo(o){if(o.scheduledTime){return{level:"programado",remaining:nu
 function fmtTimer(t){if(t.level==="programado")return"🕐 "+t.prog;return t.remaining>0?"Faltan "+t.remaining+" min":"+"+Math.abs(t.remaining)+" min tarde";}
 function setDot(id,on){const d=document.getElementById(id);if(d)d.className="conn-dot"+(on?" on":"");}
 function showToast(msg,color){const t=document.createElement("div");t.className="toast";t.textContent=msg;if(color)t.style.background=color;document.body.appendChild(t);setTimeout(()=>t.remove(),2500);}
-function todayStr(){return new Date().toISOString().slice(0,10);}
+function localDateStr(iso){const d=iso?new Date(iso):new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function todayStr(){return localDateStr();}
 
 // ── Firebase ──
 function startListeners(onOrders){
@@ -691,6 +692,29 @@ function printAllComanadas(){
   doPrint(active.sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt)).map(o=>`<div style="page-break-after:always;">${buildComandaHTML(o)}</div>`).join(""));
 }
 function printFactura(){const area=document.getElementById("fac-print");if(!area)return;doPrint('<div style="max-width:420px;margin:0 auto;">'+area.innerHTML+'</div>');}
+function reimprimirFactura(key){
+  const g=window._historialGrupos&&window._historialGrupos[key];
+  if(!g)return;
+  const subtotal=g.items.reduce((s,it)=>s+(it.price||0)*it.qty,0);
+  const propina=g.propinaCobrada||0;
+  const total=subtotal+propina;
+  const fecha=new Date(g.createdAt).toLocaleString("es-CO",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"});
+  const pagoLabel=g.metodoPago==="efectivo"?"💵 Efectivo":g.metodoPago==="tarjeta"?"💳 Tarjeta":g.metodoPago==="transferencia"?"📱 Transferencia":"—";
+  const numFacTxt=g.facturaNum?String(g.facturaNum).padStart(4,"0"):"—";
+  let h='<div class="factura-wrap">';
+  h+=`<div class="factura-header"><div class="factura-logo">🐚 La mar sabor peruano</div><div class="factura-sub">calle 7A No 15B-22 · NIT 22.510.390-6 · reslamarsaborperuano@gmail.com</div></div>`;
+  h+=`<div style="text-align:center;font-size:11px;font-weight:800;letter-spacing:1px;color:#b3402f;margin-bottom:6px;">— COPIA / REIMPRESIÓN —</div>`;
+  h+=`<div class="factura-meta"><span>Mesa ${g.table}</span><span>N° ${numFacTxt}</span><span>${fecha}</span></div>`;
+  h+='<table class="fac-table"><thead><tr><th>Ítem</th><th>Cant.</th><th>P. Unit.</th><th>Total</th></tr></thead><tbody>';
+  g.items.forEach(it=>{h+=`<tr><td>${escapeHtml(it.name)}</td><td style="text-align:center">${it.qty}</td><td>${fmtCOP(it.price||0)}</td><td>${fmtCOP((it.price||0)*it.qty)}</td></tr>`;});
+  h+='</tbody></table><div class="fac-totales">';
+  h+=`<div class="fac-row sub"><span>Subtotal</span><span>${fmtCOP(subtotal)}</span></div>`;
+  if(propina>0){h+=`<div class="fac-row prop"><span>Propina</span><span>${fmtCOP(propina)}</span></div><div class="fac-row prop-note"><span>La propina es completamente voluntaria</span></div>`;}
+  h+=`<div class="fac-row total"><span>TOTAL</span><span>${fmtCOP(total)}</span></div>`;
+  h+=`<div class="fac-row" style="margin-top:6px;"><span>Método de pago</span><span>${pagoLabel}</span></div>`;
+  h+='</div><div class="factura-thanks">¡Gracias por su visita!</div></div>';
+  doPrint('<div style="max-width:420px;margin:0 auto;">'+h+'</div>');
+}
 function printCierreCaja(total,efectivo,tarjeta,transferencia,cuentas,mesas){
   const fecha=new Date().toLocaleDateString("es-CO",{weekday:"long",day:"2-digit",month:"long",year:"numeric"});
   const hora=new Date().toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"});
@@ -712,7 +736,7 @@ function renderAdmin(){
   if(detalleMesa!==null){renderDetalleMesa(detalleMesa);return;}
   const orders=ordersCache;
   const hoy=todayStr();
-  const ordersHoy=orders.filter(o=>o.createdAt&&o.createdAt.startsWith(hoy));
+  const ordersHoy=orders.filter(o=>o.createdAt&&localDateStr(o.createdAt)===hoy);
   const totalVentas=orders.reduce((s,o)=>s+o.items.reduce((ss,it)=>ss+(it.price||0)*it.qty,0),0);
   const dishCount={};orders.forEach(o=>o.items.forEach(it=>{dishCount[it.name]=(dishCount[it.name]||0)+it.qty;}));
   const topDishes=Object.entries(dishCount).sort((a,b)=>b[1]-a[1]).slice(0,8);
@@ -779,7 +803,7 @@ function renderAdmin(){
   }
   else if(adminTab==="historial"){
     const desde=filtroDesde||todayStr(),hasta=filtroHasta||todayStr();
-    const filtradas=orders.filter(o=>{const d=o.createdAt?o.createdAt.slice(0,10):"";return d>=desde&&d<=hasta;});
+    const filtradas=orders.filter(o=>{const d=o.createdAt?localDateStr(o.createdAt):"";return d>=desde&&d<=hasta;});
     const totFiltro=filtradas.reduce((s,o)=>s+o.items.reduce((ss,it)=>ss+(it.price||0)*it.qty,0),0);
     h+='<div class="filtro-fecha">';
     h+=`<label style="font-size:13px;font-weight:600;">Desde:</label><input type="date" id="f-desde" value="${desde}"/>`;
@@ -795,21 +819,24 @@ function renderAdmin(){
       if(o.updatedAt)key=o.table+"|u|"+o.updatedAt;
       else if(o.subtotalCobrado!=null)key=o.table+"|c|"+o.subtotalCobrado+"|"+(o.propinaCobrada||0)+"|"+(o.metodoPago||"");
       else key=o.table+"|t|"+o.createdAt;
-      if(!grupos[key])grupos[key]={table:o.table,createdAt:o.createdAt,scheduledTime:o.scheduledTime,items:[],metodoPago:o.metodoPago,statuses:new Set()};
+      if(!grupos[key])grupos[key]={key,table:o.table,createdAt:o.createdAt,scheduledTime:o.scheduledTime,items:[],metodoPago:o.metodoPago,propinaCobrada:o.propinaCobrada||0,facturaNum:o.facturaNum||null,statuses:new Set()};
       grupos[key].items.push(...o.items);
       grupos[key].statuses.add(o.status);
       if(new Date(o.createdAt)<new Date(grupos[key].createdAt))grupos[key].createdAt=o.createdAt;
       if(o.metodoPago)grupos[key].metodoPago=o.metodoPago;
+      if(o.facturaNum)grupos[key].facturaNum=o.facturaNum;
     });
+    window._historialGrupos=grupos;
     const filas=Object.values(grupos).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
     h+=`<div style="font-size:14px;font-weight:700;color:var(--teal);margin-bottom:12px;">Total: ${fmtCOP(totFiltro)} · ${filas.length} cuentas</div>`;
-    h+='<table><thead><tr><th>Mesa</th><th>Fecha/Hora</th><th>Platos</th><th>Total</th><th>Pago</th><th>Estado</th></tr></thead><tbody>';
-    if(filas.length===0)h+='<tr><td colspan="6" style="text-align:center;opacity:0.5">Sin pedidos en este período</td></tr>';
+    h+='<table><thead><tr><th>Mesa</th><th>Fecha/Hora</th><th>Platos</th><th>Total</th><th>Pago</th><th>Estado</th><th></th></tr></thead><tbody>';
+    if(filas.length===0)h+='<tr><td colspan="7" style="text-align:center;opacity:0.5">Sin pedidos en este período</td></tr>';
     filas.forEach(g=>{
       const tot=g.items.reduce((s,it)=>s+(it.price||0)*it.qty,0);
       const fecha=new Date(g.createdAt).toLocaleString("es-CO",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
       const estado=g.statuses.has("entregado")&&g.statuses.size===1?"entregado":g.statuses.has("cancelado")&&g.statuses.size===1?"cancelado":Array.from(g.statuses).join(" / ");
-      h+=`<tr><td>Mesa ${g.table}</td><td>${fecha}${g.scheduledTime?` <b style="color:var(--gold)">→${g.scheduledTime}</b>`:""}</td><td>${g.items.map(it=>it.qty+"× "+escapeHtml(it.name)).join(", ")}</td><td>${fmtCOP(tot)}</td><td>${g.metodoPago||"—"}</td><td><span class="chip ${estado}">${estado}</span></td></tr>`;
+      const puedeImprimir=g.statuses.has("entregado");
+      h+=`<tr><td>Mesa ${g.table}</td><td>${fecha}${g.scheduledTime?` <b style="color:var(--gold)">→${g.scheduledTime}</b>`:""}</td><td>${g.items.map(it=>it.qty+"× "+escapeHtml(it.name)).join(", ")}</td><td>${fmtCOP(tot+(g.propinaCobrada||0))}</td><td>${g.metodoPago||"—"}</td><td><span class="chip ${estado}">${estado}</span></td><td>${puedeImprimir?`<button class="especial-add-btn" onclick="reimprimirFactura('${g.key}')">🖨 Factura</button>`:""}</td></tr>`;
     });
     h+='</tbody></table>';
   }
@@ -841,14 +868,14 @@ function renderAdmin(){
     const hoy=todayStr();
     const desde=filtroDesde||hoy,hasta=filtroHasta||hoy;
     const conPropina=ordersCache.filter(o=>{
-      const d=o.createdAt?o.createdAt.slice(0,10):"";
+      const d=o.createdAt?localDateStr(o.createdAt):"";
       return d>=desde&&d<=hasta&&o.propinaCobrada&&o.propinaCobrada>0&&o.status==="entregado";
     });
     // Agrupar por mesa (una propina por mesa, no por pedido)
     const mesasPropina={};
     conPropina.forEach(o=>{
-      if(!mesasPropina[o.table+"_"+o.createdAt.slice(0,10)]){
-        mesasPropina[o.table+"_"+o.createdAt.slice(0,10)]={
+      if(!mesasPropina[o.table+"_"+localDateStr(o.createdAt)]){
+        mesasPropina[o.table+"_"+localDateStr(o.createdAt)]={
           mesa:o.table,
           fecha:new Date(o.createdAt).toLocaleString("es-CO",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}),
           propina:o.propinaCobrada,
@@ -992,7 +1019,7 @@ async function renderDetalleMesa(mesa){
 
 async function cerrarMesa(mesa,pago){
   if(!confirm("¿Cerrar la mesa "+mesa+"? Esto marca la cuenta como pagada y ya no va a aparecer en Cuentas por Mesa.")) return;
-  await getNextFacturaNum();
+  const numFac=await getNextFacturaNum();
   const mesaOrds=ordersCache.filter(o=>o.table===mesa&&o.status!=="entregado"&&o.status!=="cancelado");
   // Calcular subtotal y propina para guardar
   if(!window._preciosTemp)window._preciosTemp={};
@@ -1007,6 +1034,7 @@ async function cerrarMesa(mesa,pago){
     updates["orders/"+o.id+"/propinaCobrada"]=propinaMesa;
     updates["orders/"+o.id+"/subtotalCobrado"]=subtotalMesa;
     updates["orders/"+o.id+"/status"]="entregado";
+    updates["orders/"+o.id+"/facturaNum"]=numFac;
     // Guardar el precio final de los especiales/según-peso directamente en el pedido
     o.items.forEach((it,idx)=>{
       if(it.price==null||it.price===0){
