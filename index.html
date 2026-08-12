@@ -242,7 +242,7 @@ td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;}tr:last
   <p class="l-foot">🔥 Firebase — tiempo real entre dispositivos</p>
 </div>
 <div id="mesero-view" style="display:none">
-  <div class="topbar"><button class="topbar-back" onclick="showView('launcher')">← Volver</button><span class="topbar-brand">La mar sabor peruano</span><span class="topbar-role"><span class="conn-dot" id="m-dot"></span>Mesero</span></div>
+  <div class="topbar"><button class="topbar-back" onclick="showView('launcher')">← Volver</button><span class="topbar-brand">La mar sabor peruano</span><span class="topbar-role"><span class="conn-dot" id="m-dot"></span><span id="mesero-name-lbl">Mesero</span> <button onclick="cambiarMesero()" style="background:none;border:none;color:inherit;opacity:0.7;font-size:12px;text-decoration:underline;cursor:pointer;margin-left:6px;">cambiar</button></span></div>
   <div id="mesero-body"></div>
   <div class="cart-bar">
     <div class="cart-row1"><div><div class="cart-info-name" id="cart-mesa-lbl">Selecciona una mesa</div><div class="cart-info-sub" id="cart-items-lbl">0 ítems · $0</div></div></div>
@@ -258,7 +258,7 @@ td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;}tr:last
   <div class="kds-wrap" id="barra-body"></div>
 </div>
 <div id="admin-view" style="display:none">
-  <div class="topbar"><button class="topbar-back" onclick="showView('launcher')">← Volver</button><span class="topbar-brand">La mar sabor peruano</span><span class="topbar-role"><span class="conn-dot" id="a-dot"></span>Admin</span></div>
+  <div class="topbar"><button class="topbar-back" onclick="showView('launcher')">← Volver</button><span class="topbar-brand">La mar sabor peruano</span><span class="topbar-role"><span class="conn-dot" id="a-dot"></span>Admin <button onclick="cambiarClaveAdmin()" style="background:none;border:none;color:inherit;opacity:0.7;font-size:12px;text-decoration:underline;cursor:pointer;margin-left:6px;">clave</button><button onclick="cerrarSesionAdmin()" style="background:none;border:none;color:inherit;opacity:0.7;font-size:12px;text-decoration:underline;cursor:pointer;margin-left:6px;">🔒 salir</button></span></div>
   <div id="admin-body"></div>
 </div>
 <div id="print-overlay"></div>
@@ -345,6 +345,10 @@ const MENU=[
 ];
 const PREP_MIN=60,NUM_MESAS=30;
 let selectedTable=null,cart={},currentView="launcher";
+let adminPin=null,adminUnlocked=false;
+let currentMesero=localStorage.getItem("meseroName")||null;
+function loadSettings(){db.ref("settings/adminPin").once("value").then(s=>{adminPin=s.val()||"1234";});}
+loadSettings();
 let ordersCache=[],inventory={},fbOrderListener=null,fbInvListener=null;
 let adminTab="cuentas",detalleMesa=null,editingOrderId=null,editingOrderIds={cocina:[],barra:[]},scheduledTime=null,incluyePropina=true;
 function escapeHtml(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
@@ -408,14 +412,57 @@ function showView(v){
   ["launcher","mesero-view","cocina-view","barra-view","admin-view"].forEach(id=>document.getElementById(id).style.display="none");
   currentView=v;
   if(v==="launcher"){document.getElementById("launcher").style.display="flex";}
-  else if(v==="mesero"){document.getElementById("mesero-view").style.display="block";cart={};selectedTable=null;editingOrderId=null;editingOrderIds={cocina:[],barra:[]};scheduledTime=null;especialesCart=[];startListeners(renderMesero);}
+  else if(v==="mesero"){document.getElementById("mesero-view").style.display="block";cart={};selectedTable=null;editingOrderId=null;editingOrderIds={cocina:[],barra:[]};scheduledTime=null;especialesCart=[];if(!currentMesero){renderMeseroLogin();}else{startListeners(renderMesero);}}
   else if(v==="cocina"){document.getElementById("cocina-view").style.display="block";startListeners(renderCocina);}
   else if(v==="barra"){document.getElementById("barra-view").style.display="block";startListeners(renderBarra);}
-  else if(v==="admin"){document.getElementById("admin-view").style.display="block";detalleMesa=null;startListeners(renderAdmin);}
+  else if(v==="admin"){document.getElementById("admin-view").style.display="block";detalleMesa=null;if(!adminUnlocked){renderAdminLock();}else{startListeners(renderAdmin);}}
 }
 
+function renderAdminLock(){
+  document.getElementById("admin-body").innerHTML=`<div style="max-width:320px;margin:60px auto;text-align:center;">
+    <div style="font-size:42px;margin-bottom:10px;">🔒</div>
+    <div style="font-size:16px;font-weight:700;color:var(--teal);margin-bottom:16px;">Ingresa la clave de Admin</div>
+    <input type="password" inputmode="numeric" id="admin-pin-input" placeholder="Clave" style="border:2px solid var(--gold);border-radius:8px;padding:12px;font-size:18px;text-align:center;width:100%;box-sizing:border-box;margin-bottom:12px;" onkeydown="if(event.key==='Enter')checkAdminPin()"/>
+    <button onclick="checkAdminPin()" style="background:#0b2b2e;color:white;padding:11px 20px;border-radius:8px;font-weight:700;font-size:14px;border:none;cursor:pointer;width:100%;">Entrar</button>
+  </div>`;
+  setTimeout(()=>{const el=document.getElementById("admin-pin-input");if(el)el.focus();},100);
+}
+function checkAdminPin(){
+  const val=document.getElementById("admin-pin-input").value;
+  if(adminPin===null){showToast("Cargando, intenta de nuevo","#b3402f");return;}
+  if(val===adminPin){adminUnlocked=true;startListeners(renderAdmin);}
+  else{showToast("❌ Clave incorrecta","#b3402f");document.getElementById("admin-pin-input").value="";}
+}
+function cerrarSesionAdmin(){adminUnlocked=false;showView("launcher");}
+function cambiarClaveAdmin(){
+  const actual=prompt("Ingresa la clave actual para confirmar:");
+  if(actual!==adminPin){if(actual!==null)showToast("❌ Clave actual incorrecta","#b3402f");return;}
+  const nueva=prompt("Nueva clave de Admin:");
+  if(!nueva)return;
+  db.ref("settings/adminPin").set(nueva).then(()=>{adminPin=nueva;showToast("✓ Clave actualizada");});
+}
+function renderMeseroLogin(){
+  document.getElementById("mesero-body").innerHTML=`<div style="max-width:320px;margin:60px auto;text-align:center;padding:0 20px;">
+    <div style="font-size:42px;margin-bottom:10px;">🧑‍🍳</div>
+    <div style="font-size:16px;font-weight:700;color:var(--teal);margin-bottom:16px;">¿Cuál es tu nombre?</div>
+    <input type="text" id="mesero-name-input" placeholder="Tu nombre" style="border:2px solid var(--gold);border-radius:8px;padding:12px;font-size:16px;text-align:center;width:100%;box-sizing:border-box;margin-bottom:12px;" onkeydown="if(event.key==='Enter')confirmarMesero()"/>
+    <button onclick="confirmarMesero()" style="background:#0b2b2e;color:white;padding:11px 20px;border-radius:8px;font-weight:700;font-size:14px;border:none;cursor:pointer;width:100%;">Continuar</button>
+  </div>`;
+  const btns=document.getElementById("cart-btns");if(btns)btns.innerHTML="";
+  const lbl=document.getElementById("cart-mesa-lbl");if(lbl)lbl.textContent="Selecciona una mesa";
+  setTimeout(()=>{const el=document.getElementById("mesero-name-input");if(el)el.focus();},100);
+}
+function confirmarMesero(){
+  const val=document.getElementById("mesero-name-input").value.trim();
+  if(!val)return;
+  currentMesero=val;
+  localStorage.setItem("meseroName",val);
+  showView("mesero");
+}
+function cambiarMesero(){currentMesero=null;localStorage.removeItem("meseroName");showView("mesero");}
+
 // ══ MESERO ══
-function selectTable(n){selectedTable=n;cart={};editingOrderId=null;editingOrderIds={cocina:[],barra:[]};scheduledTime=null;especialesCart=[];notaMesa="";const ed=getEditables(n);if(ed.length>0){ed.forEach(o=>{const tipo=o.type==="barra"?"barra":"cocina";editingOrderIds[tipo].push(o.id);o.items.forEach(it=>{if(cart[it.id])cart[it.id].qty+=it.qty;else cart[it.id]={qty:it.qty,name:it.name,price:it.price||0,note:it.note||""};});});editingOrderId=ed[0].id;scheduledTime=ed[0].scheduledTime||null;}renderMesero();}
+function selectTable(n){selectedTable=n;cart={};editingOrderId=null;editingOrderIds={cocina:[],barra:[]};scheduledTime=null;especialesCart=[];notaMesa="";const ed=getEditables(n);if(ed.length>0){ed.forEach(o=>{const tipo=o.type==="barra"?"barra":"cocina";editingOrderIds[tipo].push(o.id);o.items.forEach(it=>{if(cart[it.id])cart[it.id].qty+=it.qty;else cart[it.id]={qty:it.qty,name:it.name,price:it.price||0,note:it.note||"",bev:!!it.bev,especial:!!it.especial};});});editingOrderId=ed[0].id;scheduledTime=ed[0].scheduledTime||null;}renderMesero();}
 function addItem(id){const m=getMeta(id);if(!cart[id])cart[id]={qty:0,name:m?m.name:"",price:m?m.price||0:0,note:""};cart[id].qty++;renderMesero();}
 function decItem(id){if(!cart[id])return;cart[id].qty--;if(cart[id].qty<=0)delete cart[id];renderMesero();}
 function setSchedule(v){scheduledTime=v==="null"?null:v;renderMesero();}
@@ -431,6 +478,7 @@ function agregarEspecial(){
 function quitarEspecial(idx){especialesCart.splice(idx,1);renderMesero();}
 
 function renderMesero(){
+  const lbl=document.getElementById("mesero-name-lbl");if(lbl&&currentMesero)lbl.textContent=currentMesero;
   const occupied=getOccupied(),readyTables=getReadyTables();
   let h='<div class="sec-label">Selecciona la mesa</div>';
   h+='<div class="tbl-legend"><span><i class="lib"></i>Libre</span><span><i class="occ"></i>Con pedido</span><span><i class="rdy"></i>¡Listo!</span></div>';
@@ -458,7 +506,7 @@ function renderMesero(){
         const hora=new Date(order.createdAt).toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"});
         h+=`<div class="edit-banner">✏️ Editando Mesa ${selectedTable} <span>Entró: ${hora}</span></div>`;
         h+='<div class="edit-box"><div class="edit-box-head"><span>Ítems del pedido</span><span class="chip '+order.status+'">'+order.status+'</span></div>';
-        Object.entries(cart).forEach(([id,c])=>{const m=getMeta(id);if(!m)return;const bev=isBev(id);h+=`<div class="edit-item"><div style="flex:1"><div class="edit-item-name">${m.name}${bev?' <small style="color:var(--barra)">🍹</small>':""}</div><div class="edit-item-price">${fmtCOP(m.price)}</div></div><div class="qty-row"><button onclick="decItem('${id}')">−</button><span>${c.qty}</span><button onclick="addItem('${id}')">+</button></div></div>`;});
+        Object.entries(cart).forEach(([id,c])=>{const m=getMeta(id);const nm=m?m.name:c.name;const pr=m?m.price:c.price;const bev=m?isBev(id):!!c.bev;const esEsp=!m||c.especial;h+=`<div class="edit-item"><div style="flex:1"><div class="edit-item-name">${escapeHtml(nm)}${bev?' <small style="color:var(--barra)">🍹</small>':""}${esEsp?' <small style="color:#8a6a1a;">✨ especial</small>':""}</div><div class="edit-item-price">${pr>0?fmtCOP(pr):"precio pendiente"}</div></div><div class="qty-row"><button onclick="decItem('${id}')">−</button><span>${c.qty}</span><button onclick="addItem('${id}')">+</button></div></div>`;});
         if(Object.keys(cart).length===0)h+='<div style="padding:13px;font-size:13px;color:var(--teal);opacity:0.5;text-align:center;">Sin ítems</div>';
         h+='</div><div class="sec-label">Agregar más</div>';
       }
@@ -553,7 +601,7 @@ function sendOrder(){
   if(!selectedTable||(entries.length===0&&especialesCart.length===0))return;
   const allItems=entries.map(([id,c])=>{const m=getMeta(id);return{id,name:m?m.name:c.name,price:c.price||0,qty:c.qty,note:c.note||"",bev:isBev(id),especial:!!(m&&m.pesoVariable)};});
   especialesCart.forEach(e=>{allItems.push({id:"esp_"+Date.now()+"_"+Math.random().toString(36).slice(2,5),name:e.nombre,price:null,qty:e.qty,note:"",bev:e.dest==="barra",especial:true});});
-  const base={table:selectedTable,createdAt:new Date().toISOString(),status:"pendiente",scheduledTime:scheduledTime||null,notaMesa:notaMesa||null};
+  const base={table:selectedTable,createdAt:new Date().toISOString(),status:"pendiente",scheduledTime:scheduledTime||null,notaMesa:notaMesa||null,mesero:currentMesero||null};
   const food=allItems.filter(it=>!it.bev),bev=allItems.filter(it=>it.bev);
   const ps=[];
   const idFood="ord_"+Date.now()+"f",idBev="ord_"+(Date.now()+1)+"b";
@@ -579,12 +627,12 @@ function eliminarMesaCompleta(){
 function saveEdit(){
   if(!editingOrderId)return;
   const entries=Object.entries(cart);if(entries.length===0&&especialesCart.length===0)return;
-  let items=entries.map(([id,c])=>{const m=getMeta(id);return{id,name:m?m.name:c.name,price:c.price||0,qty:c.qty,note:c.note||"",bev:isBev(id),especial:!!(m&&m.pesoVariable)};});
+  let items=entries.map(([id,c])=>{const m=getMeta(id);return{id,name:m?m.name:c.name,price:c.price||0,qty:c.qty,note:c.note||"",bev:m?isBev(id):!!c.bev,especial:m?!!m.pesoVariable:true};});
   especialesCart.forEach(e=>{items.push({id:"esp_"+Date.now()+"_"+Math.random().toString(36).slice(2,5),name:e.nombre,price:null,qty:e.qty,note:"",bev:e.dest==="barra",especial:true});});
   const cocinaItems=items.filter(it=>!it.bev);
   const barraItems=items.filter(it=>it.bev);
   const ps=[];
-  const base={table:selectedTable,createdAt:new Date().toISOString(),status:"pendiente",scheduledTime:scheduledTime||null,notaMesa:notaMesa||null};
+  const base={table:selectedTable,createdAt:new Date().toISOString(),status:"pendiente",scheduledTime:scheduledTime||null,notaMesa:notaMesa||null,mesero:currentMesero||null};
   const nowUpd={scheduledTime:scheduledTime||null,updatedAt:new Date().toISOString()};
   function aplicar(tipo,itemsTipo,idOffset){
     const ids=editingOrderIds[tipo];
@@ -819,24 +867,25 @@ function renderAdmin(){
       if(o.updatedAt)key=o.table+"|u|"+o.updatedAt;
       else if(o.subtotalCobrado!=null)key=o.table+"|c|"+o.subtotalCobrado+"|"+(o.propinaCobrada||0)+"|"+(o.metodoPago||"");
       else key=o.table+"|t|"+o.createdAt;
-      if(!grupos[key])grupos[key]={key,table:o.table,createdAt:o.createdAt,scheduledTime:o.scheduledTime,items:[],metodoPago:o.metodoPago,propinaCobrada:o.propinaCobrada||0,facturaNum:o.facturaNum||null,statuses:new Set()};
+      if(!grupos[key])grupos[key]={key,table:o.table,createdAt:o.createdAt,scheduledTime:o.scheduledTime,items:[],metodoPago:o.metodoPago,propinaCobrada:o.propinaCobrada||0,facturaNum:o.facturaNum||null,mesero:o.mesero||null,statuses:new Set()};
       grupos[key].items.push(...o.items);
       grupos[key].statuses.add(o.status);
       if(new Date(o.createdAt)<new Date(grupos[key].createdAt))grupos[key].createdAt=o.createdAt;
       if(o.metodoPago)grupos[key].metodoPago=o.metodoPago;
       if(o.facturaNum)grupos[key].facturaNum=o.facturaNum;
+      if(o.mesero&&!grupos[key].mesero)grupos[key].mesero=o.mesero;
     });
     window._historialGrupos=grupos;
     const filas=Object.values(grupos).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
     h+=`<div style="font-size:14px;font-weight:700;color:var(--teal);margin-bottom:12px;">Total: ${fmtCOP(totFiltro)} · ${filas.length} cuentas</div>`;
-    h+='<table><thead><tr><th>Mesa</th><th>Fecha/Hora</th><th>Platos</th><th>Total</th><th>Pago</th><th>Estado</th><th></th></tr></thead><tbody>';
-    if(filas.length===0)h+='<tr><td colspan="7" style="text-align:center;opacity:0.5">Sin pedidos en este período</td></tr>';
+    h+='<table><thead><tr><th>Mesa</th><th>Mesero</th><th>Fecha/Hora</th><th>Platos</th><th>Total</th><th>Pago</th><th>Estado</th><th></th></tr></thead><tbody>';
+    if(filas.length===0)h+='<tr><td colspan="8" style="text-align:center;opacity:0.5">Sin pedidos en este período</td></tr>';
     filas.forEach(g=>{
       const tot=g.items.reduce((s,it)=>s+(it.price||0)*it.qty,0);
       const fecha=new Date(g.createdAt).toLocaleString("es-CO",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
       const estado=g.statuses.has("entregado")&&g.statuses.size===1?"entregado":g.statuses.has("cancelado")&&g.statuses.size===1?"cancelado":Array.from(g.statuses).join(" / ");
       const puedeImprimir=g.statuses.has("entregado");
-      h+=`<tr><td>Mesa ${g.table}</td><td>${fecha}${g.scheduledTime?` <b style="color:var(--gold)">→${g.scheduledTime}</b>`:""}</td><td>${g.items.map(it=>it.qty+"× "+escapeHtml(it.name)).join(", ")}</td><td>${fmtCOP(tot+(g.propinaCobrada||0))}</td><td>${g.metodoPago||"—"}</td><td><span class="chip ${estado}">${estado}</span></td><td>${puedeImprimir?`<button class="especial-add-btn" onclick="reimprimirFactura('${g.key}')">🖨 Factura</button>`:""}</td></tr>`;
+      h+=`<tr><td>Mesa ${g.table}</td><td>${escapeHtml(g.mesero||"—")}</td><td>${fecha}${g.scheduledTime?` <b style="color:var(--gold)">→${g.scheduledTime}</b>`:""}</td><td>${g.items.map(it=>it.qty+"× "+escapeHtml(it.name)).join(", ")}</td><td>${fmtCOP(tot+(g.propinaCobrada||0))}</td><td>${g.metodoPago||"—"}</td><td><span class="chip ${estado}">${estado}</span></td><td>${puedeImprimir?`<button class="especial-add-btn" onclick="reimprimirFactura('${g.key}')">🖨 Factura</button>`:""}</td></tr>`;
     });
     h+='</tbody></table>';
   }
@@ -938,6 +987,8 @@ async function renderDetalleMesa(mesa){
   const pagoLabel=metodoPago==="efectivo"?"💵 Efectivo":metodoPago==="tarjeta"?"💳 Tarjeta":"📱 Transferencia";
 
   let h=`<div class="detalle-back" onclick="cerrarDetalle()">← Volver a mesas</div>`;
+  const meseroMesa=mesaOrds.find(o=>o.mesero)?.mesero;
+  if(meseroMesa)h+=`<div style="font-size:13px;font-weight:700;color:var(--teal);margin-bottom:8px;">🧑‍🍳 Atendida por: ${escapeHtml(meseroMesa)}</div>`;
   h+=`<div style="margin-bottom:10px;"><div style="font-size:12px;font-weight:700;color:var(--teal);margin-bottom:6px;">MÉTODO DE PAGO</div><div class="pago-selector">`;
   ["efectivo","tarjeta","transferencia"].forEach(m=>{h+=`<button class="pago-btn${metodoPago===m?" active":""}" onclick="setMetodoPago('${m}')">${m==="efectivo"?"💵 Efectivo":m==="tarjeta"?"💳 Tarjeta":"📱 Transferencia"}</button>`;});
   h+='</div></div>';
