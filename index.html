@@ -596,9 +596,20 @@ function mostrarResumen(){
 function cerrarResumen(e){if(e.target.id==="resumen-modal")cerrarResumenBtn();}
 function cerrarResumenBtn(){const m=document.getElementById("resumen-modal");if(m)m.remove();}
 
+function ajustarInventario(cambios){
+  // cambios: array de {id, delta} — delta negativo resta stock, positivo lo devuelve
+  const updates={};
+  cambios.forEach(c=>{const cur=inventory[c.id];if(cur!=null)updates["inventory/"+c.id]=Math.max(0,cur+c.delta);});
+  if(Object.keys(updates).length>0)db.ref().update(updates);
+}
+let enviandoPedido=false;
 function sendOrder(){
+  if(enviandoPedido)return;
   const entries=Object.entries(cart);
   if(!selectedTable||(entries.length===0&&especialesCart.length===0))return;
+  enviandoPedido=true;
+  const btnEl=document.querySelector(".modal-send-btn");
+  if(btnEl){btnEl.disabled=true;btnEl.style.opacity="0.6";btnEl.textContent="Enviando…";}
   const allItems=entries.map(([id,c])=>{const m=getMeta(id);return{id,name:m?m.name:c.name,price:c.price||0,qty:c.qty,note:c.note||"",bev:isBev(id),especial:!!(m&&m.pesoVariable)};});
   especialesCart.forEach(e=>{allItems.push({id:"esp_"+Date.now()+"_"+Math.random().toString(36).slice(2,5),name:e.nombre,price:null,qty:e.qty,note:"",bev:e.dest==="barra",especial:true});});
   const base={table:selectedTable,createdAt:new Date().toISOString(),status:"pendiente",scheduledTime:scheduledTime||null,notaMesa:notaMesa||null,mesero:currentMesero||null};
@@ -609,13 +620,16 @@ function sendOrder(){
   if(bev.length>0)ps.push(db.ref("orders/"+idBev).set({...base,id:idBev,items:bev,type:"barra"}));
   const updates={};allItems.forEach(it=>{const cur=inventory[it.id];if(cur!=null)updates["inventory/"+it.id]=Math.max(0,cur-it.qty);});
   if(Object.keys(updates).length>0)db.ref().update(updates);
-  Promise.all(ps).then(()=>{cart={};scheduledTime=null;especialesCart=[];notaMesa="";cerrarResumenBtn();showToast("✓ Pedido enviado — Mesa "+selectedTable);renderMesero();});
+  Promise.all(ps).then(()=>{cart={};scheduledTime=null;especialesCart=[];notaMesa="";cerrarResumenBtn();showToast("✓ Pedido enviado — Mesa "+selectedTable);renderMesero();}).catch(e=>{showToast("Error al enviar: "+e.message,"#b3402f");}).finally(()=>{enviandoPedido=false;});
 }
 
 function eliminarMesaCompleta(){
   if(!selectedTable)return;
   if(!confirm("¿Eliminar TODO el pedido de la Mesa "+selectedTable+"? Esto cancela cocina y barra por completo. No se puede deshacer."))return;
   const activos=ordersCache.filter(o=>o.table===selectedTable&&o.status!=="entregado"&&o.status!=="cancelado");
+  const cambiosInv=[];
+  activos.forEach(o=>{(o.items||[]).forEach(it=>cambiosInv.push({id:it.id,delta:it.qty}));});
+  if(cambiosInv.length>0)ajustarInventario(cambiosInv);
   const updates={};
   activos.forEach(o=>{updates["orders/"+o.id+"/status"]="cancelado";});
   db.ref().update(updates).then(()=>{
@@ -625,13 +639,17 @@ function eliminarMesaCompleta(){
   }).catch(e=>{showToast("Error: "+e.message,"#b3402f");});
 }
 function saveEdit(){
-  if(!editingOrderId)return;
+  if(!editingOrderId||enviandoPedido)return;
   const entries=Object.entries(cart);if(entries.length===0&&especialesCart.length===0)return;
+  enviandoPedido=true;
+  const btnEl=document.querySelector(".cbtn.save");
+  if(btnEl){btnEl.disabled=true;btnEl.style.opacity="0.6";btnEl.textContent="Guardando…";}
   let items=entries.map(([id,c])=>{const m=getMeta(id);return{id,name:m?m.name:c.name,price:c.price||0,qty:c.qty,note:c.note||"",bev:m?isBev(id):!!c.bev,especial:m?!!m.pesoVariable:true};});
   especialesCart.forEach(e=>{items.push({id:"esp_"+Date.now()+"_"+Math.random().toString(36).slice(2,5),name:e.nombre,price:null,qty:e.qty,note:"",bev:e.dest==="barra",especial:true});});
   const cocinaItems=items.filter(it=>!it.bev);
   const barraItems=items.filter(it=>it.bev);
   const ps=[];
+  const cambiosInv=[];
   const base={table:selectedTable,createdAt:new Date().toISOString(),status:"pendiente",scheduledTime:scheduledTime||null,notaMesa:notaMesa||null,mesero:currentMesero||null};
   const nowUpd={scheduledTime:scheduledTime||null,updatedAt:new Date().toISOString()};
   function aplicar(tipo,itemsTipo,idOffset){
@@ -639,32 +657,46 @@ function saveEdit(){
     if(itemsTipo.length>0){
       if(ids.length>0){
         const ordActual=ordersCache.find(o=>o.id===ids[0]);
+        const antes={};(ordActual&&ordActual.items||[]).forEach(it=>{antes[it.id]=(antes[it.id]||0)+it.qty;});
         // Si el pedido ya estaba "listo" y ahora tiene algo nuevo o en mayor cantidad, se regresa a pendiente para que lo preparen
         let volverPendiente=false;
         if(ordActual&&ordActual.status==="listo"){
-          const antes={};(ordActual.items||[]).forEach(it=>{antes[it.id]=(antes[it.id]||0)+it.qty;});
           volverPendiente=itemsTipo.some(it=>it.qty>(antes[it.id]||0));
         }
+        // Ajustar inventario por la diferencia (más cantidad = resta stock, menos = lo devuelve)
+        const vistos=new Set();
+        itemsTipo.forEach(it=>{vistos.add(it.id);const diff=it.qty-(antes[it.id]||0);if(diff!==0)cambiosInv.push({id:it.id,delta:-diff});});
+        Object.keys(antes).forEach(id=>{if(!vistos.has(id))cambiosInv.push({id,delta:antes[id]});});
         const upd={...nowUpd,items:itemsTipo};
         if(volverPendiente){upd.status="pendiente";}
         ps.push(db.ref("orders/"+ids[0]).update(upd));
-        // Si había pedidos duplicados del mismo tipo (de un bug anterior), se consolidan y los sobrantes se cancelan
-        for(let i=1;i<ids.length;i++)ps.push(db.ref("orders/"+ids[i]).update({...nowUpd,status:"cancelado"}));
+        // Si había pedidos duplicados del mismo tipo (de un bug anterior), se consolidan, se devuelve su inventario y los sobrantes se cancelan
+        for(let i=1;i<ids.length;i++){
+          const ordDup=ordersCache.find(o=>o.id===ids[i]);
+          if(ordDup&&ordDup.items)ordDup.items.forEach(it=>cambiosInv.push({id:it.id,delta:it.qty}));
+          ps.push(db.ref("orders/"+ids[i]).update({...nowUpd,status:"cancelado"}));
+        }
       }else{
+        itemsTipo.forEach(it=>cambiosInv.push({id:it.id,delta:-it.qty}));
         const id="ord_"+(Date.now()+idOffset)+"_"+Math.random().toString(36).slice(2,5);
         ps.push(db.ref("orders/"+id).set({...base,id,items:itemsTipo,type:tipo}));
       }
     }else if(ids.length>0){
-      ids.forEach(id=>ps.push(db.ref("orders/"+id).update({...nowUpd,status:"cancelado"})));
+      ids.forEach(id=>{
+        const ordDup=ordersCache.find(o=>o.id===id);
+        if(ordDup&&ordDup.items)ordDup.items.forEach(it=>cambiosInv.push({id:it.id,delta:it.qty}));
+        ps.push(db.ref("orders/"+id).update({...nowUpd,status:"cancelado"}));
+      });
     }
   }
   aplicar("cocina",cocinaItems,0);
   aplicar("barra",barraItems,1);
+  if(cambiosInv.length>0)ajustarInventario(cambiosInv);
   Promise.all(ps).then(()=>{
     showToast("✓ Pedido actualizado");
     cart={};editingOrderId=null;editingOrderIds={cocina:[],barra:[]};scheduledTime=null;especialesCart=[];
     renderMesero();
-  }).catch(e=>{showToast("Error al actualizar: "+e.message,"#b3402f");});
+  }).catch(e=>{showToast("Error al actualizar: "+e.message,"#b3402f");}).finally(()=>{enviandoPedido=false;});
 }
 
 // ══ KDS ══
@@ -709,7 +741,12 @@ function renderKDS(bodyId,active,isBarra){
 }
 
 function setStatus(id,s){db.ref("orders/"+id+"/status").set(s);}
-function cancelarPedido(id){if(!confirm("¿Cancelar este pedido?"))return;db.ref("orders/"+id+"/status").set("cancelado");}
+function cancelarPedido(id){
+  if(!confirm("¿Cancelar este pedido?"))return;
+  const ord=ordersCache.find(o=>o.id===id);
+  if(ord&&ord.items)ajustarInventario(ord.items.map(it=>({id:it.id,delta:it.qty})));
+  db.ref("orders/"+id+"/status").set("cancelado");
+}
 
 // ══ IMPRIMIR ══
 function buildComandaHTML(order){
@@ -835,6 +872,7 @@ function renderAdmin(){
     h+=`<div class="cierre-card"><div class="num">${fmtCOP(tra)}</div><div class="lbl">📱 Transferencia</div></div>`;
     h+='</div>';
     h+=`<button class="cierre-btn" onclick="printCierreCaja(${tot},${ef},${tar},${tra},${entHoy.length},${mesas})">🖨 Imprimir cierre de caja</button>`;
+    h+=`<button class="cierre-btn" style="background:var(--teal);margin-top:8px;" onclick="exportarCierreCSV(${tot},${ef},${tar},${tra},${entHoy.length},${mesas})">📥 Exportar CSV</button>`;
   }
   else if(adminTab==="resumen"){
     h+=`<div class="a-grid">
@@ -856,7 +894,7 @@ function renderAdmin(){
     h+='<div class="filtro-fecha">';
     h+=`<label style="font-size:13px;font-weight:600;">Desde:</label><input type="date" id="f-desde" value="${desde}"/>`;
     h+=`<label style="font-size:13px;font-weight:600;">Hasta:</label><input type="date" id="f-hasta" value="${hasta}"/>`;
-    h+=`<button onclick="aplicarFiltro()">Filtrar</button></div>`;
+    h+=`<button onclick="aplicarFiltro()">Filtrar</button><button onclick="exportarHistorialCSV()" style="margin-left:8px;">📥 Exportar CSV</button></div>`;
     // Agrupar cocina + barra (y rondas pedidas en momentos distintos) de la misma cuenta:
     // 1) si ya se cerró con el sistema nuevo, todos comparten el mismo updatedAt exacto
     // 2) si es una cuenta vieja cerrada antes de eso, comparten el mismo subtotal/propina/pago cobrado
@@ -1108,7 +1146,57 @@ function guardarPrecioEspecial(orderId,idx,inputId){
 function setPrecioTemp(key,val){if(!window._preciosTemp)window._preciosTemp={};window._preciosTemp[key]=parseInt(val)||0;renderDetalleMesa(detalleMesa);}
 function saveInventory(e){e.preventDefault();const form=e.target;const updates={};MENU.forEach(group=>{group.items.forEach(item=>{const el=form.elements[item.id];if(el){const v=el.value.trim();updates["inventory/"+item.id]=v===""?null:parseInt(v)||0;}});});db.ref().update(updates).then(()=>showToast("✓ Inventario guardado"));}
 function savePreciosVar(e){e.preventDefault();const form=e.target;const updates={};MENU.flatMap(g=>g.items).filter(i=>i.price===null).forEach(item=>{const el=form.elements[item.id];if(el){const v=el.value.trim();updates["precios_var/"+item.id]=v===""?null:parseInt(v)||null;}});db.ref().update(updates).then(()=>showToast("✓ Precios guardados"));}
-function resetOrders(){if(!confirm("¿Borrar todos los pedidos?"))return;db.ref("orders").remove();}
+function exportarCierreCSV(tot,ef,tar,tra,cuentas,mesas){
+  const fecha=new Date().toLocaleDateString("es-CO",{weekday:"long",day:"2-digit",month:"long",year:"numeric"});
+  const rows=[
+    ["Cierre de Caja",fecha],
+    [],
+    ["Total del día",tot],
+    ["Cuentas cerradas",cuentas],
+    ["Mesas atendidas",mesas],
+    ["Efectivo",ef],
+    ["Tarjeta",tar],
+    ["Transferencia",tra]
+  ];
+  descargarCSV("cierre_caja_"+todayStr()+".csv",rows);
+}
+function exportarHistorialCSV(){
+  const grupos=window._historialGrupos||{};
+  const filas=Object.values(grupos).sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt));
+  if(filas.length===0){showToast("No hay datos para exportar en este período","#b3402f");return;}
+  const rows=[["Mesa","Mesero","Fecha","Hora","Platos","Subtotal","Propina","Total","Método de pago","Estado","N° Factura"]];
+  filas.forEach(g=>{
+    const subtotal=g.items.reduce((s,it)=>s+(it.price||0)*it.qty,0);
+    const d=new Date(g.createdAt);
+    const estado=g.statuses.has("entregado")&&g.statuses.size===1?"entregado":g.statuses.has("cancelado")&&g.statuses.size===1?"cancelado":Array.from(g.statuses).join(" / ");
+    rows.push([g.table,g.mesero||"",d.toLocaleDateString("es-CO"),d.toLocaleTimeString("es-CO"),g.items.map(it=>it.qty+"x "+it.name).join(", "),subtotal,g.propinaCobrada||0,subtotal+(g.propinaCobrada||0),g.metodoPago||"",estado,g.facturaNum||""]);
+  });
+  descargarCSV("historial_"+(filtroDesde||todayStr())+"_a_"+(filtroHasta||todayStr())+".csv",rows);
+}
+function descargarCSV(filename,rows){
+  const csv=rows.map(r=>r.map(c=>{const s=String(c==null?"":c).replace(/"/g,'""');return /[",\n;]/.test(s)?'"'+s+'"':s;}).join(";")).join("\r\n");
+  const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download=filename;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+async function resetOrders(){
+  const conf=prompt('⚠️ Esto borra TODOS los pedidos (activos e historial) para siempre.\nSe va a descargar un respaldo primero.\n\nEscribe BORRAR en mayúsculas para confirmar:');
+  if(conf!=="BORRAR"){if(conf!==null)showToast("Cancelado — no se borró nada");return;}
+  const snap=await db.ref("orders").once("value");
+  const data=snap.val()||{};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download="respaldo_pedidos_"+todayStr()+".json";
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  await db.ref("orders").remove();
+  showToast("🗑 Todos los pedidos fueron borrados (respaldo descargado)");
+  renderAdmin();
+}
 </script>
 </body>
 </html>
