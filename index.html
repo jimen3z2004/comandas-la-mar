@@ -926,6 +926,16 @@ function renderAdmin(){
       h+=`<tr><td>Mesa ${g.table}</td><td>${escapeHtml(g.mesero||"—")}</td><td>${fecha}${g.scheduledTime?` <b style="color:var(--gold)">→${g.scheduledTime}</b>`:""}</td><td>${g.items.map(it=>it.qty+"× "+escapeHtml(it.name)).join(", ")}</td><td>${fmtCOP(tot+(g.propinaCobrada||0))}</td><td>${g.metodoPago||"—"}</td><td><span class="chip ${estado}">${estado}</span></td><td>${puedeImprimir?`<button class="especial-add-btn" onclick="reimprimirFactura('${g.key}')">🖨 Factura</button>`:""}</td></tr>`;
     });
     h+='</tbody></table>';
+    // Resumen de bebidas vendidas en el período (incluye especiales de barra escritos a mano)
+    const bebidasVendidas={};
+    filtradas.forEach(o=>{o.items.forEach(it=>{if(it.bev){if(!bebidasVendidas[it.name])bebidasVendidas[it.name]={qty:0,especial:false};bebidasVendidas[it.name].qty+=it.qty;if(it.id&&it.id.startsWith("esp_"))bebidasVendidas[it.name].especial=true;}});});
+    const listaBeb=Object.entries(bebidasVendidas).sort((a,b)=>b[1].qty-a[1].qty);
+    const totalBeb=listaBeb.reduce((s,[,v])=>s+v.qty,0);
+    h+=`<div class="a-title" style="margin-top:24px;">🍹 Bebidas vendidas en este período (${totalBeb} en total)</div>`;
+    h+='<table><thead><tr><th>Bebida</th><th>Cantidad</th></tr></thead><tbody>';
+    if(listaBeb.length===0)h+='<tr><td colspan="2" style="text-align:center;opacity:0.5">Sin bebidas vendidas en este período</td></tr>';
+    listaBeb.forEach(([name,v])=>{h+=`<tr><td>${escapeHtml(name)}${v.especial?' <span style="font-size:10px;background:#fdf3da;color:#8a6a1a;padding:1px 6px;border-radius:8px;font-weight:700;">especial</span>':''}</td><td>${v.qty}</td></tr>`;});
+    h+='</tbody></table>';
   }
   else if(adminTab==="precios"){
     const sinPrecio=MENU.flatMap(g=>g.items).filter(i=>i.price===null&&!i.pesoVariable);
