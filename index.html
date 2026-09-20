@@ -351,7 +351,8 @@ const PREP_MIN=60,NUM_MESAS=30;
 let selectedTable=null,cart={},currentView="launcher";
 let adminPin=null,adminUnlocked=false;
 let currentMesero=localStorage.getItem("meseroName")||null;
-function loadSettings(){db.ref("settings/adminPin").once("value").then(s=>{adminPin=s.val()||"1234";});}
+function loadSettings(){db.ref("settings/adminPin").once("value").then(s=>{adminPin=s.val()||"1234";}).catch(()=>{});}
+loadSettings();
 firebase.auth().onAuthStateChanged(user=>{if(user)loadSettings();});
 let ordersCache=[],inventory={},fbOrderListener=null,fbInvListener=null;
 let adminTab="cuentas",detalleMesa=null,editingOrderId=null,editingOrderIds={cocina:[],barra:[]},scheduledTime=null,incluyePropina=true,incluyeImpoconsumo=true;
